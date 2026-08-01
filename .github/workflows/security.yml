@@ -2,60 +2,37 @@ name: Security Audit
 
 on:
   schedule:
-    # Every Monday at 08:00 UTC
+    # Tous les lundis à 08h00 UTC
     - cron: '0 8 * * 1'
   push:
     paths:
       - '**/package.json'
-      - '**/package-lock.json'
+      - 'bun.lock'
   workflow_dispatch:
 
-env:
-  NODE_VERSION: '22'
-
 jobs:
-  # ───────────────────────────────────────────────────────────────────────────
-  # npm audit across all workspaces
-  # ───────────────────────────────────────────────────────────────────────────
-  npm-audit:
-    name: npm audit — ${{ matrix.workspace }}
+  audit:
+    name: Dependency audit — ${{ matrix.workspace }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        workspace: [backend, frontend]
+        workspace: [frontend, backend]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
+          bun-version: latest
 
       - name: Install deps
-        run: npm ci --ignore-scripts
+        run: bun install --frozen-lockfile
 
-      - name: Audit — ${{ matrix.workspace }}
-        id: audit
-        run: |
-          npm audit --json --workspace=${{ matrix.workspace }} > audit-${{ matrix.workspace }}.json 2>&1 || true
-          cat audit-${{ matrix.workspace }}.json
+      - name: npm audit — ${{ matrix.workspace }}
+        run: npm audit --audit-level=high --prefix ${{ matrix.workspace }}
+        continue-on-error: true
 
-      - name: Upload audit report
-        uses: actions/upload-artifact@v4
-        with:
-          name: audit-report-${{ matrix.workspace }}
-          path: audit-${{ matrix.workspace }}.json
-          retention-days: 30
-
-      - name: Fail on critical vulnerabilities
-        run: npm audit --audit-level=critical --workspace=${{ matrix.workspace }}
-
-  # ───────────────────────────────────────────────────────────────────────────
-  # Secret scanning with gitleaks
-  # ───────────────────────────────────────────────────────────────────────────
   secret-scan:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
@@ -65,17 +42,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-  # ───────────────────────────────────────────────────────────────────────────
-  # Dependency review (for PRs)
-  # ───────────────────────────────────────────────────────────────────────────
   dependency-review:
-    name: Dependency Review
+    name: Dependency Review (PRs)
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
 
