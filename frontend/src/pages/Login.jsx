@@ -5,8 +5,8 @@ import { Building2, Mail, Lock, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Login() {
-  const [email, setEmail] = useState('admin@cafm.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login, loading } = useAuthStore();
   const navigate = useNavigate();
 
@@ -68,24 +68,7 @@ export default function Login() {
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Se connecter'}
           </button>
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => {
-              useAuthStore.getState().mockLogin();
-              navigate('/');
-            }}
-            className="w-full bg-transparent text-zinc-400 py-2.5 rounded-none font-mono tracking-widest uppercase text-xs hover:bg-zinc-900 hover:text-zinc-50 border border-zinc-800 transition flex items-center justify-center mt-2 disabled:opacity-50"
-          >
-            Mode Mock (Démo)
-          </button>
         </form>
-
-        <div className="mt-8 p-4 bg-zinc-900 border border-zinc-800 text-xs text-zinc-500 font-mono">
-          <p className="tracking-widest uppercase text-[10px] mb-2 text-zinc-400">Comptes de test</p>
-          <p>Admin : admin@cafm.com / admin123</p>
-          <p className="mt-1">Tech : tech@cafm.com / tech123</p>
-        </div>
       </div>
     </div>
   );
