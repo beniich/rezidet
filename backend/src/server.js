@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
 
 const cors = require('cors');
 const helmet = require('helmet');
@@ -12,13 +11,6 @@ const swaggerRoutes = require('./routes/swagger.routes');
 const { sanitizeInput } = require('./middleware/security.middleware');
 const { apiLimiter } = require('./middleware/rate-limit.middleware');
 const { initSentry, Sentry } = require('./config/sentry');
-
-// Initialize Sentry early
-initSentry(app);
-
-// Sentry request handler must be the first middleware on the app
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
 
 const authRoutes = require('./routes/auth.routes');
 const assetRoutes = require('./routes/asset.routes');
@@ -36,6 +28,9 @@ const tenantRoutes = require('./routes/tenant.routes');
 const exportRoutes = require('./routes/export.routes');
 const erpRoutes = require('./routes/erp.routes');
 const bimRoutes = require('./routes/bim.routes');
+const publicRoutes = require('./routes/public.routes');
+const iotRoutes = require('./routes/iot.routes');
+const systemsRoutes = require('./routes/systems.routes');
 const crmAuthRoutes = require('./routes/crm.auth.routes');
 const crmContactRoutes = require('./routes/crm.contact.routes');
 const crmDealRoutes = require('./routes/crm.deal.routes');
@@ -46,6 +41,11 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: ['http://localhost:3000', 'http://localhost:3001'], credentials: true }
 });
+
+// Initialize Sentry (must be before any other middleware)
+initSentry(app);
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -64,7 +64,7 @@ app.use('/api/', apiLimiter);
 // ============== DOCUMENTATION ==============
 app.use('/', swaggerRoutes);
 
-// Health check pour la production
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -94,6 +94,9 @@ app.use('/api/tenants', tenantRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/erp', erpRoutes);
 app.use('/api/bim', bimRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/iot', iotRoutes);
+app.use('/api/systems', systemsRoutes);
 
 // Sentry error handler must be before any other error middleware
 app.use(Sentry.Handlers.errorHandler());
