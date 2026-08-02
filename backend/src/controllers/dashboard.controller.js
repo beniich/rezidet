@@ -1,3 +1,66 @@
+/**
+ * @swagger
+ * /api/dashboard/executive:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: KPIs exécutifs complets
+ *     description: Retourne tous les KPIs pour le tableau de bord exécutif
+ *     parameters:
+ *       - in: query
+ *         name: period
+ *         schema:
+ *           type: string
+ *           enum: [7d, 30d, 90d, 365d]
+ *           default: 30d
+ *       - in: query
+ *         name: buildingId
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: KPIs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 kpis:
+ *                   type: object
+ *                   properties:
+ *                     assets:
+ *                       type: object
+ *                       properties:
+ *                         total: { type: integer }
+ *                         availability: { type: number }
+ *                         totalValue: { type: number }
+ *                     financial:
+ *                       type: object
+ *                       properties:
+ *                         monthlyRevenue: { type: number }
+ *                         roi: { type: number }
+ *                     operations:
+ *                       type: object
+ *                       properties:
+ *                         openWorkOrders: { type: integer }
+ *                         mttr: { type: number }
+ *
+ * /api/dashboard/predictions:
+ *   get:
+ *     tags: [Dashboard]
+ *     summary: Prédictions IA sur les pannes
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [failure, energy, occupancy]
+ *           default: failure
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 10 }
+ *     responses:
+ *       200:
+ *         description: Liste des prédictions
+ */
 const prisma = require('../config/database');
 
 /**

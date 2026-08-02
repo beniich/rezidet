@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
-import { Search, Plus, Filter, Package, ThermometerSun } from 'lucide-react';
+import { Search, Plus, Filter, Package, ThermometerSun, Edit, Trash2 } from 'lucide-react';
+import { AssetModal } from '../components/modals';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -23,6 +24,8 @@ export default function Assets() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editingAsset, setEditingAsset] = useState(null);
 
   useEffect(() => {
     loadAssets();
@@ -42,6 +45,16 @@ export default function Assets() {
     }
   };
 
+  const handleEdit = (asset) => {
+    setEditingAsset(asset);
+    setShowModal(true);
+  };
+
+  const handleCreate = () => {
+    setEditingAsset(null);
+    setShowModal(true);
+  };
+
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
@@ -49,7 +62,7 @@ export default function Assets() {
           <h1 className="text-2xl font-bold text-slate-900">Gestion des actifs</h1>
           <p className="text-slate-500">{assets.length} actifs enregistrés</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700">
+        <button onClick={handleCreate} className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700">
           <Plus className="w-4 h-4" />
           Nouvel actif
         </button>
@@ -89,6 +102,7 @@ export default function Assets() {
               <th className="px-6 py-3">Statut</th>
               <th className="px-6 py-3">Prochaine maint.</th>
               <th className="px-6 py-3">Coût</th>
+              <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -134,11 +148,23 @@ export default function Assets() {
                 <td className="px-6 py-4 text-sm text-slate-700">
                   {asset.purchasePrice?.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })}
                 </td>
+                <td className="px-6 py-4 text-right">
+                  <button onClick={() => handleEdit(asset)} className="p-1 hover:bg-slate-100 rounded text-slate-500 transition-colors">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <AssetModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        asset={editingAsset}
+        onSuccess={loadAssets}
+      />
     </div>
   );
 }

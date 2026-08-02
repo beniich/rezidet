@@ -1,3 +1,47 @@
+/**
+ * @swagger
+ * /api/workorders:
+ *   get:
+ *     tags: [Work Orders]
+ *     summary: Liste des ordres de travail
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, IN_PROGRESS, COMPLETED, CANCELLED]
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [LOW, MEDIUM, HIGH, CRITICAL]
+ *     responses:
+ *       200:
+ *         description: Liste des WO
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/WorkOrder'
+ *
+ *   post:
+ *     tags: [Work Orders]
+ *     summary: Créer un ordre de travail
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/WorkOrderInput'
+ *     responses:
+ *       201:
+ *         description: WO créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/WorkOrder'
+ */
 const prisma = require('../config/database');
 
 exports.getAll = async (req, res) => {

@@ -1,3 +1,109 @@
+/**
+ * @swagger
+ * /api/assets:
+ *   get:
+ *     tags: [Assets]
+ *     summary: Liste des actifs
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema: { type: string }
+ *         description: Recherche par nom ou numéro de série
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [OPERATIONAL, MAINTENANCE, BREAKDOWN, RETIRED]
+ *       - in: query
+ *         name: category
+ *         schema: { type: string }
+ *       - in: query
+ *         name: buildingId
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Liste des actifs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Asset'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ *
+ *   post:
+ *     tags: [Assets]
+ *     summary: Créer un nouvel actif
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AssetInput'
+ *     responses:
+ *       201:
+ *         description: Actif créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Asset'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *
+ * /api/assets/{id}:
+ *   get:
+ *     tags: [Assets]
+ *     summary: Détail d'un actif
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Détails
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Asset'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *
+ *   put:
+ *     tags: [Assets]
+ *     summary: Modifier un actif
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AssetInput'
+ *     responses:
+ *       200:
+ *         description: Actif modifié
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *
+ *   delete:
+ *     tags: [Assets]
+ *     summary: Supprimer un actif
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Supprimé
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ */
 const prisma = require('../config/database');
 
 exports.getAll = async (req, res) => {
