@@ -31,7 +31,7 @@ jobs:
           bun-version: latest
 
       - name: Install deps (bun)
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Vite build
         run: bun run build --filter=frontend
@@ -60,7 +60,7 @@ jobs:
           bun-version: latest
 
       - name: Install deps (bun)
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Prisma generate
         run: bunx prisma generate
@@ -83,7 +83,7 @@ jobs:
           bun-version: latest
 
       - name: Install deps
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: ESLint — frontend
         run: bun run lint --if-present
