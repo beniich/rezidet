@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useCrmAuthStore } from '../../store/crmAuthStore';
+import { useCrmAuthStore } from '../store/crmAuthStore';
 
 /**
  * Hook pour écouter les événements Server-Sent Events
