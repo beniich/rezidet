@@ -72,6 +72,53 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
+const { verifyFirebaseToken } = require('../services/firebase-admin.service');
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) return res.status(400).json({ error: 'idToken requis' });
+
+    const decoded = await verifyFirebaseToken(idToken);
+    if (!decoded || !decoded.email) {
+      return res.status(401).json({ error: 'Token Google invalide' });
+    }
+
+    let user = await prisma.user.findUnique({ where: { email: decoded.email } });
+    
+    if (!user) {
+      // Création automatique de l'utilisateur s'il n'existe pas encore
+      user = await prisma.user.create({
+        data: {
+          email: decoded.email,
+          firstName: decoded.name?.split(' ')[0] || 'User',
+          lastName: decoded.name?.split(' ')[1] || '',
+          password: '', // Pas de mot de passe requis pour OAuth Google
+          role: 'VIEWER'
+        }
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      },
+      token
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 exports.register = async (req, res) => {
   try {

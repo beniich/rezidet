@@ -18,6 +18,10 @@ export const nexusApi = {
     const { data } = await api.post('/auth/register', registerData);
     return data;
   },
+  googleLogin: async (idToken) => {
+    const { data } = await api.post('/auth/google', { idToken });
+    return data;
+  },
 
   // IoT routes
   getSensors: async (type) => {
