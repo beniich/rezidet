@@ -183,3 +183,50 @@ exports.exportCSV = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.importContacts = async (req, res) => {
+  try {
+    const orgId = req.crm.organizationId;
+    const contacts = req.body.contacts; // Array of contact objects
+    if (!contacts || !Array.isArray(contacts)) return res.status(400).json({ error: 'Format invalide' });
+
+    // Verifier limite plan
+    const org = await prisma.cRMOrganization.findUnique({ where: { id: orgId } });
+    const count = await prisma.cRMContact.count({ where: { organizationId: orgId } });
+    if (org.plan === 'FREE' && (count + contacts.length) > org.maxContacts) {
+      return res.status(402).json({
+        error: \Limite atteinte (\ contacts max). Impossible d'importer \ contacts.\
+      });
+    }
+
+    const data = contacts.map(c => ({
+      firstName: c.firstName || 'Inconnu',
+      lastName: c.lastName || 'Inconnu',
+      email: c.email || null,
+      phone: c.phone || null,
+      company: c.company || null,
+      jobTitle: c.jobTitle || null,
+      type: c.type || 'LEAD',
+      status: 'ACTIVE',
+      organizationId: orgId,
+      ownerId: req.crm.userId
+    }));
+
+    await prisma.cRMContact.createMany({ data, skipDuplicates: true });
+    
+    await prisma.cRMActivityLog.create({
+      data: {
+        organizationId: orgId,
+        userId: req.crm.userId,
+        action: 'IMPORT',
+        entity: 'contact',
+        entityId: 'batch'
+      }
+    });
+
+    res.json({ message: \\ contacts importés avec succès\ });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

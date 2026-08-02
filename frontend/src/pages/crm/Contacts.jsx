@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import crmApi from '../../services/crmApi';
 import { 
-  Users, Search, Plus, Filter, Download, 
+  Users, Search, Plus, Filter, Download, Upload,
   MoreVertical, Edit2, Trash2, Mail, Phone, Building2 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -18,6 +18,7 @@ export default function CRMContacts() {
   const [filters, setFilters] = useState({ search: '', type: '', status: '', page: 1 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
+  const fileInputRef = React.useRef(null);
   
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '', company: '', jobTitle: '', type: 'LEAD', status: 'ACTIVE'
@@ -52,6 +53,40 @@ export default function CRMContacts() {
     } catch (error) {
       toast.error("Erreur lors de l'export");
     }
+  };
+
+  const handleImport = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const text = ev.target.result;
+        // Basic CSV parsing
+        const lines = text.split('\n').filter(line => line.trim());
+        const headers = lines[0].split(',').map(h => h.trim());
+        const contacts = lines.slice(1).map(line => {
+          const values = line.split(',');
+          let obj = {};
+          headers.forEach((h, i) => { obj[h] = values[i]?.trim(); });
+          return obj;
+        }).filter(c => c.firstName || c.lastName); // basic validation
+
+        if (contacts.length === 0) {
+          toast.error("Aucun contact valide trouve dans le fichier.");
+          return;
+        }
+
+        await crmApi.post('/contacts/import', { contacts });
+        toast.success(`${contacts.length} contacts importes avec succes`);
+        fetchContacts();
+      } catch (error) {
+        toast.error(error.response?.data?.error || "Erreur lors de l'import");
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
   };
 
   const handleSubmit = async (e) => {
@@ -123,6 +158,20 @@ export default function CRMContacts() {
         </div>
         
         <div className="flex items-center gap-3">
+          <input 
+            type="file" 
+            accept=".csv" 
+            className="hidden" 
+            ref={fileInputRef} 
+            onChange={handleImport} 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center px-4 py-2 bg-[#18181b]/80 border border-zinc-700 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 hover:text-white transition-colors"
+          >
+            <Upload size={18} className="mr-2" />
+            Importer
+          </button>
           <button 
             onClick={handleExport}
             className="flex items-center px-4 py-2 bg-[#18181b]/80 border border-zinc-700 text-zinc-300 rounded-lg font-medium hover:bg-zinc-800 hover:text-white transition-colors"

@@ -6,6 +6,7 @@ router.use(crmAuthMiddleware);
 
 router.get('/', ctrl.getAll);
 router.post('/', ctrl.create);
+router.post('/import', ctrl.importContacts);
 router.get('/export', ctrl.exportCSV);
 router.get('/:id', ctrl.getById);
 router.put('/:id', ctrl.update);

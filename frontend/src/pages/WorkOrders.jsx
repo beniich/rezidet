@@ -3,6 +3,7 @@ import api from '../services/api';
 import { Plus, ClipboardList, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import toast from 'react-hot-toast';
 
 const statusConfig = {
   PENDING: { label: 'En attente', color: 'bg-slate-100 text-slate-700', icon: Clock },
@@ -22,11 +23,18 @@ export default function WorkOrders() {
   const [workOrders, setWorkOrders] = useState([]);
   const [filter, setFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
     api.get('/workorders')
       .then(({ data }) => setWorkOrders(data))
+      .catch(err => toast.error('Erreur de chargement'))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const filtered = filter === 'ALL' ? workOrders : workOrders.filter((wo) => wo.status === filter);
@@ -45,7 +53,10 @@ export default function WorkOrders() {
           <h1 className="text-2xl font-bold text-slate-900">Ordres de travail</h1>
           <p className="text-slate-500">Gestion et suivi des interventions</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700">
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition"
+        >
           <Plus className="w-4 h-4" />
           Nouvel ordre
         </button>
@@ -118,6 +129,110 @@ export default function WorkOrders() {
             </div>
           );
         })}
+      </div>
+
+      {showModal && (
+        <WorkOrderModal
+          onClose={() => setShowModal(false)}
+          onSuccess={loadData}
+        />
+      )}
+    </div>
+  );
+}
+
+function WorkOrderModal({ onClose, onSuccess }) {
+  const [assets, setAssets] = useState([]);
+  const [form, setForm] = useState({
+    title: '', description: '', type: 'PREVENTIVE', priority: 'MEDIUM',
+    scheduledAt: '', assetId: '', estimatedCost: 0
+  });
+
+  useEffect(() => {
+    api.get('/assets').then(({ data }) => {
+      setAssets(data);
+      if (data.length > 0) setForm(f => ({ ...f, assetId: data[0].id }));
+    });
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...form,
+        estimatedCost: Number(form.estimatedCost),
+        scheduledAt: new Date(form.scheduledAt).toISOString()
+      };
+      await api.post('/workorders', payload);
+      toast.success('Ordre de travail créé');
+      onSuccess();
+      onClose();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Erreur lors de la création');
+    }
+  };
+
+  const field = (key, props) => ({
+    value: form[key],
+    onChange: (e) => setForm({ ...form, [key]: e.target.value }),
+    className: 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary-500',
+    ...props
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl">
+        <form onSubmit={handleSubmit}>
+          <div className="p-6 border-b">
+            <h2 className="text-xl font-bold">Nouvel ordre de travail</h2>
+          </div>
+          <div className="p-6 space-y-4">
+            <input required placeholder="Titre de l'intervention" {...field('title')} />
+            
+            <textarea required placeholder="Description détaillée" {...field('description')} rows={3} />
+            
+            <select required {...field('assetId')}>
+              {assets.length === 0 && <option value="">Chargement des actifs...</option>}
+              {assets.map(a => <option key={a.id} value={a.id}>{a.name} ({a.location})</option>)}
+            </select>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">Type</label>
+                <select required {...field('type')}>
+                  <option value="PREVENTIVE">Préventif</option>
+                  <option value="CORRECTIVE">Correctif</option>
+                  <option value="INSPECTION">Inspection</option>
+                  <option value="UPGRADE">Mise à niveau</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">Priorité</label>
+                <select required {...field('priority')}>
+                  <option value="LOW">Basse</option>
+                  <option value="MEDIUM">Moyenne</option>
+                  <option value="HIGH">Haute</option>
+                  <option value="CRITICAL">Critique</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">Date prévue</label>
+                <input type="datetime-local" required {...field('scheduledAt')} />
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 mb-1 block">Coût estimé (€)</label>
+                <input type="number" min="0" step="10" {...field('estimatedCost')} />
+              </div>
+            </div>
+          </div>
+          <div className="p-6 border-t flex justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition">Annuler</button>
+            <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">Créer</button>
+          </div>
+        </form>
       </div>
     </div>
   );
