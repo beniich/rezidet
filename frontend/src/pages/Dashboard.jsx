@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { io } from 'socket.io-client';
 import {
@@ -74,6 +75,7 @@ const ListCard = ({ title, items, renderItem, emptyMessage, action, onAction }) 
 
 // ============== COMPOSANT PRINCIPAL ==============
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -395,7 +397,7 @@ export default function Dashboard() {
         <ListCard
           title="Derniers Ordres"
           action="Tous"
-          onAction={() => {}}
+          onAction={() => navigate('/work-orders')}
           emptyMessage="Aucun ordre"
           items={lists.recentWorkOrders}
           renderItem={(wo) => {
@@ -437,7 +439,7 @@ export default function Dashboard() {
         <ListCard
           title="Prévisionnel (7J)"
           action="Agenda"
-          onAction={() => {}}
+          onAction={() => navigate('/cmms')}
           emptyMessage="Rien de prévu"
           items={lists.upcomingMaintenance}
           renderItem={(m) => (
@@ -470,7 +472,7 @@ export default function Dashboard() {
         <ListCard
           title="Alertes"
           action="Voir"
-          onAction={() => {}}
+          onAction={() => navigate('/notifications')}
           emptyMessage="0 Alerte"
           items={lists.criticalAlerts}
           renderItem={(a) => (
