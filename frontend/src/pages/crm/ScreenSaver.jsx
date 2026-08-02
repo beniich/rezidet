@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { crmApi } from '../../services/crmApi';
+import crmApi from '../../services/crmApi';
 import { io } from 'socket.io-client';
 import {
   Trophy, TrendingUp, Users, Package, Maximize,
