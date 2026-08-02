@@ -5,7 +5,7 @@ import {
   onFirebaseAuthStateChanged,
   getCurrentIdToken
 } from '../lib/firebase';
-import { crmApi } from '../services/crmApi';
+import crmApi from '../services/crmApi';
 import { useCrmAuthStore } from '../store/crmAuthStore';
 
 /**
