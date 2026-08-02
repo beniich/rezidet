@@ -82,31 +82,31 @@ export default function App() {
         <Route path="/security-news" element={<SecurityNews />} />
         <Route path="/architecture" element={<SystemArchitecture />} />
 
+        {/* Variantes Home — Pages Publiques (Phase 3) */}
+        <Route path="/home/1" element={<HomePage1 />} />
+        <Route path="/home/2" element={<HomePage2 />} />
+        <Route path="/home/3" element={<HomePage3 />} />
+        <Route path="/home/4" element={<HomePage4 />} />
+        <Route path="/home/5" element={<HomePage5 />} />
+        <Route path="/home/6" element={<HomePage6 />} />
+        <Route path="/home/7" element={<HomePage7 />} />
+        <Route path="/home/8" element={<HomePage8 />} />
+        <Route path="/home/9" element={<HomePage9 />} />
+        <Route path="/home/10" element={<HomePage10 />} />
+        <Route path="/home/11" element={<HomePage11 />} />
+        <Route path="/home/12" element={<HomePage12 />} />
+        <Route path="/home/13" element={<HomePage13 />} />
+        <Route path="/home/14" element={<HomePage14 />} />
+        <Route path="/home/15" element={<HomePage15 />} />
+        <Route path="/home/16" element={<HomePage16 />} />
+        <Route path="/home/17" element={<HomePage17 />} />
+        <Route path="/home/18" element={<HomePage18 />} />
+        <Route path="/home/19" element={<HomePage19 />} />
+        <Route path="/home/20" element={<HomePage20 />} />
+
         <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
-          
-          {/* Variantes Home (Phase 3) */}
-          <Route path="home/1" element={<HomePage1 />} />
-          <Route path="home/2" element={<HomePage2 />} />
-          <Route path="home/3" element={<HomePage3 />} />
-          <Route path="home/4" element={<HomePage4 />} />
-          <Route path="home/5" element={<HomePage5 />} />
-          <Route path="home/6" element={<HomePage6 />} />
-          <Route path="home/7" element={<HomePage7 />} />
-          <Route path="home/8" element={<HomePage8 />} />
-          <Route path="home/9" element={<HomePage9 />} />
-          <Route path="home/10" element={<HomePage10 />} />
-          <Route path="home/11" element={<HomePage11 />} />
-          <Route path="home/12" element={<HomePage12 />} />
-          <Route path="home/13" element={<HomePage13 />} />
-          <Route path="home/14" element={<HomePage14 />} />
-          <Route path="home/15" element={<HomePage15 />} />
-          <Route path="home/16" element={<HomePage16 />} />
-          <Route path="home/17" element={<HomePage17 />} />
-          <Route path="home/18" element={<HomePage18 />} />
-          <Route path="home/19" element={<HomePage19 />} />
-          <Route path="home/20" element={<HomePage20 />} />
 
           {/* Assets & Operations */}
           <Route path="assets" element={<Assets />} />
@@ -139,6 +139,7 @@ export default function App() {
           <Route path="screensaver" element={<ScreenSaver />} />
         </Route>
       </Routes>
+
     </BrowserRouter>
   );
 }
