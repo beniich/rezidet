@@ -13,8 +13,7 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'charts': ['recharts'],
-          'ui': ['lucide-react', 'react-hot-toast', 'date-fns'],
-          'forms': ['react-hook-form', 'zod']
+          'ui': ['lucide-react', 'react-hot-toast', 'date-fns']
         }
       }
     },
