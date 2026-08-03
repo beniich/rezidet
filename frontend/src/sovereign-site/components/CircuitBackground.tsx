@@ -2,12 +2,13 @@ import React from 'react';
 import { BackgroundTheme } from '../types';
 
 interface CircuitBackgroundProps {
-  theme: BackgroundTheme;
+  theme?: BackgroundTheme;
+  className?: string;
 }
 
-export const CircuitBackground: React.FC<CircuitBackgroundProps> = ({ theme }) => {
+export const CircuitBackground: React.FC<CircuitBackgroundProps> = ({ theme = 'circuit', className = '' }) => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-background">
+    <div className={`fixed inset-0 pointer-events-none z-0 overflow-hidden bg-background ${className}`}>
       {/* Ambient gradient overlay */}
       <div className="absolute inset-0 bg-main-radial opacity-90" />
 
@@ -181,3 +182,5 @@ export const CircuitBackground: React.FC<CircuitBackgroundProps> = ({ theme }) =
     </div>
   );
 };
+
+export default CircuitBackground;

@@ -8,7 +8,7 @@ import {
 } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CircuitBackground } from './components/CircuitBackground';
+import CircuitBackground from './components/CircuitBackground';
 import { LanguageProvider } from './context/LanguageContext';
 
 import { HomePage } from './components/pages/HomePage';

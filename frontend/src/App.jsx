@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 import Layout from './components/Layout';
 import SpiderLogo from './components/SpiderLogo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CommandPalette } from './components/ui/CommandPalette';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -70,7 +71,19 @@ const PrivateRoute = ({ children }) => {
 
 function AppContent() {
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const { theme } = useThemeStore();
   useKeyboardShortcuts(setPaletteOpen);
+
+  // Apply theme on every render
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   return (
     <>
       <Toaster position="top-right" />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { CircuitBackground } from '../sovereign-site/components/CircuitBackground';
+import CircuitBackground from '../sovereign-site/components/CircuitBackground';
 import { Mail, Lock, Building2, User, Loader2, Key } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
