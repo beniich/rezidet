@@ -92,6 +92,8 @@ model User {
   consultingBookings ServiceBooking[] @relation("Consultant")
   promoRedemptions  PromoRedemption[]
   assignedQuotes    EnterpriseQuote[]
+  presence          UserPresence?
+  assetComments     AssetComment[]            @relation("AssetCommentAuthor")
 }
 
 model Building {
@@ -166,6 +168,7 @@ model Asset {
   positionX  Float?
   positionY  Float?
   positionZ  Float?
+  assetComments AssetComment[]
 
 }
 
@@ -1498,4 +1501,70 @@ model Option {
   expiration  DateTime
   status      String   @default("OPEN")
   createdAt   DateTime @default(now())
+}
+
+model UserPresence {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          String   @default("online")
+  statusMessage   String?
+  statusEmoji     String?
+  lastActiveAt    DateTime @default(now())
+  currentPage     String?
+  currentResource String?
+  device          String?
+  socketId        String?
+  invisibleMode   Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+}
+
+model AssetComment {
+  id           String   @id @default(uuid())
+  assetId      String
+  asset        Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  positionX    Float?
+  positionY    Float?
+  anchorType   String   @default("asset")
+  content      String
+  parentId     String?
+  parent       AssetComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies      AssetComment[] @relation("CommentReplies")
+  authorId     String
+  author       User     @relation("AssetCommentAuthor", fields: [authorId], references: [id])
+  resolved     Boolean  @default(false)
+  resolvedById String?
+  resolvedAt   DateTime?
+  mentions     String   @default("[]")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SupportSession {
+  id             String   @id
+  hostId         String
+  assetId        String?
+  status         String   @default("ACTIVE")
+  supportAgentId String?
+  startedAt      DateTime @default(now())
+  joinedAt       DateTime?
+  endedAt        DateTime?
+  createdAt      DateTime @default(now())
+}
+
+model SupportAnnotation {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String
+  type      String
+  data      String
+  createdAt DateTime @default(now())
+}
+
+model SupportChatMessage {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String
+  message   String
+  createdAt DateTime @default(now())
 }

@@ -11,6 +11,7 @@ import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 import { useTenantStore } from '../store/tenantStore';
 import clsx from 'clsx';
+import { PresencePanel, StatusDot } from './PresencePanel';
 
 const navItems = [
   { to: '/dashboard',             icon: LayoutDashboard, label: 'Tableau de bord', end: true },
@@ -53,6 +54,7 @@ export default function Layout() {
   const { tenant, loadTenant } = useTenantStore();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [presenceOpen, setPresenceOpen] = useState(false);
   const isDark = theme === 'dark';
 
   useEffect(() => {
@@ -172,13 +174,21 @@ export default function Layout() {
             <p className="text-xs text-zinc-500 font-mono tracking-wider truncate">{user?.role}</p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-mono tracking-widest uppercase text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 border border-zinc-800 rounded-sm transition"
-        >
-          <LogOut className="w-4 h-4" />
-          Déconnexion
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setPresenceOpen(true)}
+            className="w-full flex items-center justify-between px-3 py-2 text-xs font-mono tracking-widest uppercase text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 border border-zinc-800 rounded-sm transition"
+          >
+            <span className="flex items-center gap-2"><StatusDot status="online" size="sm" /> Équipe</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-mono tracking-widest uppercase text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 border border-zinc-800 rounded-sm transition"
+          >
+            <LogOut className="w-4 h-4" />
+            Déconnexion
+          </button>
+        </div>
       </div>
     </>
   );
@@ -234,10 +244,11 @@ export default function Layout() {
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main className="flex-1 overflow-y-auto bg-background relative">
           <Outlet />
         </main>
       </div>
+      <PresencePanel isOpen={presenceOpen} onClose={() => setPresenceOpen(false)} currentUser={user} />
     </div>
   );
 }

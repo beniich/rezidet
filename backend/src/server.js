@@ -57,7 +57,25 @@ assetPositionRouter.post('/positions', require('./middleware/auth.middleware').a
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: ['http://localhost:3000', 'http://localhost:3001'], credentials: true }
+  cors: { origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'], credentials: true }
+});
+
+const { WebSocketServer } = require('ws');
+const { setupWSConnection } = require('y-websocket/bin/utils');
+const wss = new WebSocketServer({ noServer: true });
+
+wss.on('connection', (ws, req) => {
+  const url = new URL(req.url, 'http://localhost');
+  const roomName = url.pathname.replace('/yjs/', '').split('?')[0];
+  setupWSConnection(ws, req, { docName: roomName, gc: true });
+});
+
+server.on('upgrade', (request, socket, head) => {
+  if (request.url.startsWith('/yjs/')) {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  }
 });
 
 // Initialize Sentry (must be before any other middleware)
@@ -119,6 +137,8 @@ app.use('/api/iot', iotRoutes);
 app.use('/api/systems', systemsRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/assets', assetPositionRouter);
+const collaborationRoutes = require('./routes/collaboration.routes');
+app.use('/api', collaborationRoutes);
 
 // Sentry error handler must be before any other error middleware
 // app.use(Sentry.Handlers.errorHandler());
@@ -161,6 +181,8 @@ app.get('/api/health', (req, res) => {
 // WebSocket - Collaboration temps réel
 const collab = new CollaborationService(io);
 global.collaborationService = collab;
+const PresenceService = require('./services/presence.service');
+const presenceService = new PresenceService(io);
 
 io.on('connection', (socket) => {
   console.log('Client connecté:', socket.id);
