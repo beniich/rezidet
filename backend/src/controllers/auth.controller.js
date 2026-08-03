@@ -100,7 +100,7 @@ exports.googleLogin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, tenantId: user.tenantId },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -111,7 +111,8 @@ exports.googleLogin = async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role
+        role: user.role,
+        tenantId: user.tenantId
       },
       token
     });
@@ -127,13 +128,27 @@ exports.register = async (req, res) => {
     if (existing) return res.status(400).json({ error: 'Email déjà utilisé' });
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const orgSlug = `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-org-${Date.now().toString().slice(-4)}`;
     const user = await prisma.user.create({
-      data: { email, password: hashedPassword, firstName, lastName, role: role || 'VIEWER' },
-      select: { id: true, email: true, firstName: true, lastName: true, role: true }
+      data: {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        role: role || 'ADMIN',
+        tenant: {
+          create: {
+            name: `${firstName} Org`,
+            slug: orgSlug,
+            plan: 'ENTERPRISE'
+          }
+        }
+      },
+      select: { id: true, email: true, firstName: true, lastName: true, role: true, tenantId: true }
     });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, tenantId: user.tenantId },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -156,7 +171,7 @@ exports.login = async (req, res) => {
     if (!valid) return res.status(401).json({ error: 'Identifiants invalides' });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: user.role, tenantId: user.tenantId },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -164,7 +179,7 @@ exports.login = async (req, res) => {
     res.json({
       user: {
         id: user.id, email: user.email, firstName: user.firstName,
-        lastName: user.lastName, role: user.role
+        lastName: user.lastName, role: user.role, tenantId: user.tenantId
       },
       token
     });

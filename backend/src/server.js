@@ -9,8 +9,9 @@ const { Server } = require('socket.io');
 const prisma = require('./config/database');
 const swaggerRoutes = require('./routes/swagger.routes');
 const { sanitizeInput } = require('./middleware/security.middleware');
-const { apiLimiter } = require('./middleware/rate-limit.middleware');
-const { initSentry, Sentry } = require('./config/sentry');
+// const errorHandler = require('./middleware/error.middleware');
+// const { apiLimiter } = require('./middleware/rate-limit.middleware');
+// const { initSentry, Sentry } = require('./config/sentry');
 
 const authRoutes = require('./routes/auth.routes');
 const assetRoutes = require('./routes/asset.routes');
@@ -35,6 +36,23 @@ const crmAuthRoutes = require('./routes/crm.auth.routes');
 const crmContactRoutes = require('./routes/crm.contact.routes');
 const crmDealRoutes = require('./routes/crm.deal.routes');
 const { startIoTSimulation } = require('./services/iot.service');
+const pushRoutes = require('./routes/push.routes');
+const CollaborationService = require('./services/collaboration.service');
+
+// Asset position routes (inline)
+const assetPositionRouter = require('express').Router();
+assetPositionRouter.post('/positions', require('./middleware/auth.middleware').authMiddleware, async (req, res) => {
+  try {
+    const { positions } = req.body;
+    await prisma.$transaction(
+      positions.map(p => prisma.asset.update({
+        where: { id: p.assetId, organizationId: req.user.tenantId },
+        data: { positionX: p.positionX, positionY: p.positionY }
+      }))
+    );
+    res.json({ updated: positions.length });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -43,9 +61,9 @@ const io = new Server(server, {
 });
 
 // Initialize Sentry (must be before any other middleware)
-initSentry(app);
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
+// initSentry(app);
+// app.use(Sentry.Handlers.requestHandler());
+// app.use(Sentry.Handlers.tracingHandler());
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -59,7 +77,7 @@ app.use(express.json());
 
 // ============== SÉCURITÉ GLOBALE ==============
 app.use(sanitizeInput);
-app.use('/api/', apiLimiter);
+// app.use('/api/', apiLimiter);
 
 // ============== DOCUMENTATION ==============
 app.use('/', swaggerRoutes);
@@ -97,9 +115,11 @@ app.use('/api/bim', bimRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/iot', iotRoutes);
 app.use('/api/systems', systemsRoutes);
+app.use('/api/push', pushRoutes);
+app.use('/api/assets', assetPositionRouter);
 
 // Sentry error handler must be before any other error middleware
-app.use(Sentry.Handlers.errorHandler());
+// app.use(Sentry.Handlers.errorHandler());
 
 // Error handling (Global)
 app.use((err, req, res, next) => {
@@ -120,12 +140,26 @@ global.broadcastSSE = eventsRoutes.broadcast;
 const billingRoutes = require('./routes/billing.routes');
 app.use('/api/crm/billing', billingRoutes);
 
+// Monétisation principale (abonnements, marketplace, affiliation)
+const mainBillingRoutes = require('./routes/billing.routes');
+app.use('/api/billing', mainBillingRoutes);
+const marketplaceRoutes = require('./routes/marketplace.routes');
+app.use('/api/marketplace', marketplaceRoutes);
+const affiliateRoutes = require('./routes/affiliate.routes');
+app.use('/api/affiliate', affiliateRoutes);
+const subscriptionRoutes = require('./routes/subscription.routes');
+app.use('/api/billing', subscriptionRoutes);
+app.use('/api/enterprise', subscriptionRoutes);
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// WebSocket
+// WebSocket - Collaboration temps réel
+const collab = new CollaborationService(io);
+global.collaborationService = collab;
+
 io.on('connection', (socket) => {
   console.log('Client connecté:', socket.id);
   socket.on('disconnect', () => console.log('Client déconnecté:', socket.id));

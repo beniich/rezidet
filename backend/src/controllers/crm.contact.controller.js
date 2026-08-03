@@ -195,7 +195,7 @@ exports.importContacts = async (req, res) => {
     const count = await prisma.cRMContact.count({ where: { organizationId: orgId } });
     if (org.plan === 'FREE' && (count + contacts.length) > org.maxContacts) {
       return res.status(402).json({
-        error: \Limite atteinte (\ contacts max). Impossible d'importer \ contacts.\
+        error: `Limite atteinte (${org.maxContacts} contacts max). Impossible d'importer ${contacts.length} contacts.`
       });
     }
 
@@ -224,7 +224,7 @@ exports.importContacts = async (req, res) => {
       }
     });
 
-    res.json({ message: \\ contacts importés avec succès\ });
+    res.json({ message: `${contacts.length} contacts importÃ©s avec succÃ¨s` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

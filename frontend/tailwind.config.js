@@ -7,12 +7,20 @@ export default {
         display: ['Space Grotesk', 'sans-serif'],
       },
       colors: {
-        background: '#09090b', // zinc-950
-        surface: '#18181b', // zinc-900
-        primary: {
-          50: '#f4f4f5', 100: '#e4e4e7', 200: '#d4d4d8', 300: '#a1a1aa',
-          400: '#71717a', 500: '#52525b', 600: '#3f3f46', 700: '#27272a',
-          800: '#18181b', 900: '#09090b'
+        background: 'var(--color-background)',
+        surface: 'var(--color-surface)',
+        zinc: {
+          50: 'var(--color-zinc-50)',
+          100: 'var(--color-zinc-100)',
+          200: 'var(--color-zinc-200)',
+          300: 'var(--color-zinc-300)',
+          400: 'var(--color-zinc-400)',
+          500: 'var(--color-zinc-500)',
+          600: 'var(--color-zinc-600)',
+          700: 'var(--color-zinc-700)',
+          800: 'var(--color-zinc-800)',
+          900: 'var(--color-zinc-900)',
+          950: 'var(--color-zinc-950)',
         }
       }
     }

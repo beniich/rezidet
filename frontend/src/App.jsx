@@ -3,6 +3,10 @@ import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import Layout from './components/Layout';
 import SpiderLogo from './components/SpiderLogo';
+import { useState } from 'react';
+import { CommandPalette } from './components/ui/CommandPalette';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Pages
 import Login from './pages/Login';
@@ -25,89 +29,80 @@ import Exports from './pages/Exports';
 import Tenants from './pages/Tenants';
 import AIAssistant from './pages/AIAssistant';
 import ScreenSaver from './pages/crm/ScreenSaver';
+import OrganizationSettings from './pages/OrganizationSettings';
+import BillingSettings from './pages/BillingSettings';
+import Marketplace from './pages/Marketplace';
+import EnterpriseQuote from './pages/EnterpriseQuote';
+import VendorDashboard from './pages/VendorDashboard';
 
-// Nouvelles Pages Phase 1 (Publiques)
-import SecureLogin from './pages/SecureLogin';
+// Web3
+import Staking from './pages/Staking';
+import DAO from './pages/DAO';
+import Launchpad from './pages/Launchpad';
+import OracleDashboard from './pages/OracleDashboard';
+import Bridge from './pages/Bridge';
+import Perpetuals from './pages/Perpetuals';
+import Options from './pages/Options';
+
+// Anciennes Pages Phase 1 (Publiques) - SUSPENDUES
+// import SecureLogin from './pages/SecureLogin';
 import Register from './pages/Register';
-import LandingPageNew from './pages/LandingPageNew';
-import Mission from './pages/Mission';
-import Pricing from './pages/Pricing';
-import HelpCenter from './pages/HelpCenter';
-import ContactExperts from './pages/ContactExperts';
-import SecurityNews from './pages/SecurityNews';
-import SystemArchitecture from './pages/SystemArchitecture';
+// import SiteApp from './new-site/SiteApp';
+// import Mission from './pages/Mission';
+// import Pricing from './pages/Pricing';
+// import HelpCenter from './pages/HelpCenter';
+// import ContactExperts from './pages/ContactExperts';
+// import SecurityNews from './pages/SecurityNews';
+// import SystemArchitecture from './pages/SystemArchitecture';
 
-// Nouvelles Pages Phase 3 (Variantes Home)
-import HomePage1 from './pages/HomePage1';
-import HomePage2 from './pages/HomePage2';
-import HomePage3 from './pages/HomePage3';
-import HomePage4 from './pages/HomePage4';
-import HomePage5 from './pages/HomePage5';
-import HomePage6 from './pages/HomePage6';
-import HomePage7 from './pages/HomePage7';
-import HomePage8 from './pages/HomePage8';
-import HomePage9 from './pages/HomePage9';
-import HomePage10 from './pages/HomePage10';
-import HomePage11 from './pages/HomePage11';
-import HomePage12 from './pages/HomePage12';
-import HomePage13 from './pages/HomePage13';
-import HomePage14 from './pages/HomePage14';
-import HomePage15 from './pages/HomePage15';
-import HomePage16 from './pages/HomePage16';
-import HomePage17 from './pages/HomePage17';
-import HomePage18 from './pages/HomePage18';
-import HomePage19 from './pages/HomePage19';
-import HomePage20 from './pages/HomePage20';
+// Anciennes Pages Phase 3 (Variantes Home) - SUSPENDUES
+// import HomePage1 from './pages/HomePage1';
+// ... (HomePage1 to 20 commented out)
+// import HomePage20 from './pages/HomePage20';
+
+import SovereignApp from './sovereign-site/App';
 
 const PrivateRoute = ({ children }) => {
   const token = useAuthStore((s) => s.token);
   return token ? children : <Navigate to="/login" />;
 };
 
-export default function App() {
+function AppContent() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  useKeyboardShortcuts(setPaletteOpen);
   return (
-    <BrowserRouter>
+    <>
       <Toaster position="top-right" />
+      <OfflineIndicator />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      {/* Hint shortcut in TopBar area */}
       <Routes>
         <Route path="/login" element={<Login />} />
         
-        {/* Pages Publiques (Phase 1) */}
-        <Route path="/auth/login" element={<SecureLogin />} />
+        {/* Pages Publiques (Phase 1) - SUSPENDUES */}
+        {/* <Route path="/auth/login" element={<SecureLogin />} /> */}
         <Route path="/auth/register" element={<Register />} />
-        <Route path="/landing" element={<LandingPageNew />} />
+        {/* <Route path="/landing" element={<SiteApp />} />
         <Route path="/about" element={<Mission />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/support" element={<HelpCenter />} />
         <Route path="/contact" element={<ContactExperts />} />
         <Route path="/security-news" element={<SecurityNews />} />
-        <Route path="/architecture" element={<SystemArchitecture />} />
+        <Route path="/architecture" element={<SystemArchitecture />} /> */}
 
-        {/* Variantes Home — Pages Publiques (Phase 3) */}
-        <Route path="/home/1" element={<HomePage1 />} />
-        <Route path="/home/2" element={<HomePage2 />} />
-        <Route path="/home/3" element={<HomePage3 />} />
-        <Route path="/home/4" element={<HomePage4 />} />
-        <Route path="/home/5" element={<HomePage5 />} />
-        <Route path="/home/6" element={<HomePage6 />} />
-        <Route path="/home/7" element={<HomePage7 />} />
-        <Route path="/home/8" element={<HomePage8 />} />
-        <Route path="/home/9" element={<HomePage9 />} />
-        <Route path="/home/10" element={<HomePage10 />} />
-        <Route path="/home/11" element={<HomePage11 />} />
-        <Route path="/home/12" element={<HomePage12 />} />
-        <Route path="/home/13" element={<HomePage13 />} />
-        <Route path="/home/14" element={<HomePage14 />} />
-        <Route path="/home/15" element={<HomePage15 />} />
-        <Route path="/home/16" element={<HomePage16 />} />
-        <Route path="/home/17" element={<HomePage17 />} />
-        <Route path="/home/18" element={<HomePage18 />} />
-        <Route path="/home/19" element={<HomePage19 />} />
-        <Route path="/home/20" element={<HomePage20 />} />
+        {/* Variantes Home — Pages Publiques (Phase 3) - SUSPENDUES */}
+        {/* <Route path="/home/:id" element={<HomePageX />} /> */}
 
-        <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+        {/* NOUVEAU SITE SOVEREIGN */}
+        <Route path="/" element={<SovereignApp />} />
+        <Route path="/landing" element={<SovereignApp />} />
+        <Route path="/site" element={<SovereignApp />} />
+        <Route path="/enterprise" element={<EnterpriseQuote />} />
+
+        {/* DASHBOARD PROTEGE */}
+        <Route path="/dashboard" element={<PrivateRoute><Layout /></PrivateRoute>}>
           <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-
+          
           {/* Assets & Operations */}
           <Route path="assets" element={<Assets />} />
           <Route path="spaces" element={<Spaces />} />
@@ -133,14 +128,33 @@ export default function App() {
           <Route path="leases" element={<Leases />} />
           <Route path="tenants" element={<Tenants />} />
           <Route path="ai" element={<AIAssistant />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<Settings />} />
           
           {/* Display */}
           <Route path="screensaver" element={<ScreenSaver />} />
+          <Route path="settings" element={<OrganizationSettings />} />
+          <Route path="billing" element={<BillingSettings />} />
+          <Route path="marketplace" element={<Marketplace />} />
+          <Route path="vendor" element={<VendorDashboard />} />
+          
+          {/* Web3 / Crypto */}
+          <Route path="staking" element={<Staking />} />
+          <Route path="dao" element={<DAO />} />
+          <Route path="launchpad" element={<Launchpad />} />
+          <Route path="oracle" element={<OracleDashboard />} />
+          <Route path="bridge" element={<Bridge />} />
+          <Route path="perpetuals" element={<Perpetuals />} />
+          <Route path="options" element={<Options />} />
         </Route>
       </Routes>
-
-    </BrowserRouter>
+    </>
   );
 }
 
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}

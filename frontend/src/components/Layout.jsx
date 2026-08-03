@@ -1,47 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, Package, MapPin,
   ClipboardList, BarChart3, LogOut, Wrench, Box,
   Bell, Globe, Download, Database, Layers, Menu, X,
-  FileText, Cpu
+  FileText, Cpu, Sun, Moon, Settings, CreditCard, ShoppingBag, Store,
+  Coins, Vote, Rocket, Activity, Zap, TrendingUp, Target
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
+import { useTenantStore } from '../store/tenantStore';
 import clsx from 'clsx';
 
 const navItems = [
-  { to: '/',            icon: LayoutDashboard, label: 'Tableau de bord', end: true },
-  { to: '/assets',      icon: Package,         label: 'Actifs' },
-  { to: '/spaces',      icon: MapPin,          label: 'Espaces' },
-  { to: '/work-orders', icon: ClipboardList,   label: 'Ordres de travail' },
-  { to: '/maintenance', icon: Wrench,          label: 'Maintenance' },
-  { to: '/analytics',   icon: BarChart3,       label: 'Analytique' },
-  { to: '/leases',      icon: FileText,        label: 'Baux' },
+  { to: '/dashboard',             icon: LayoutDashboard, label: 'Tableau de bord', end: true },
+  { to: '/dashboard/assets',      icon: Package,         label: 'Actifs' },
+  { to: '/dashboard/spaces',      icon: MapPin,          label: 'Espaces' },
+  { to: '/dashboard/work-orders', icon: ClipboardList,   label: 'Ordres de travail' },
+  { to: '/dashboard/maintenance', icon: Wrench,          label: 'Maintenance' },
+  { to: '/dashboard/analytics',   icon: BarChart3,       label: 'Analytique' },
+  { to: '/dashboard/leases',      icon: FileText,        label: 'Baux' },
 ];
 
 const advancedItems = [
-  { to: '/cmms',           icon: Wrench,    label: 'CMMS / GMAO' },
-  { to: '/digital-twin',   icon: Box,       label: 'Jumeau Numérique' },
-  { to: '/bim',            icon: Layers,    label: 'Visualiseur BIM' },
-  { to: '/erp',            icon: Database,  label: 'Intégration ERP' },
-  { to: '/notifications',  icon: Bell,      label: 'Notifications' },
-  { to: '/tenants',        icon: Globe,     label: 'Multi-Tenant' },
-  { to: '/exports',        icon: Download,  label: 'Exports PDF' },
-  { to: '/ai',             icon: Cpu,       label: 'Assistant IA' },
+  { to: '/dashboard/cmms',           icon: Wrench,    label: 'CMMS / GMAO' },
+  { to: '/dashboard/digital-twin',   icon: Box,       label: 'Jumeau Numérique' },
+  { to: '/dashboard/bim',            icon: Layers,    label: 'Visualiseur BIM' },
+  { to: '/dashboard/erp',            icon: Database,  label: 'Intégration ERP' },
+  { to: '/dashboard/notifications',  icon: Bell,      label: 'Notifications' },
+  { to: '/dashboard/tenants',        icon: Globe,     label: 'Multi-Tenant' },
+  { to: '/dashboard/exports',        icon: Download,  label: 'Exports PDF' },
+  { to: '/dashboard/ai',             icon: Cpu,       label: 'Assistant IA' },
+  { to: '/dashboard/settings',       icon: Settings,  label: 'Paramètres Org.' },
+  { to: '/dashboard/billing',        icon: CreditCard, label: 'Facturation' },
+  { to: '/dashboard/marketplace',    icon: ShoppingBag, label: 'Marketplace' },
+  { to: '/dashboard/vendor',         icon: Store,        label: 'Vendor' },
 ];
 
-const linkClass = ({ isActive }) =>
-  clsx(
-    'flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-widest font-mono transition-colors',
-    isActive
-      ? 'bg-zinc-800 text-zinc-50 border-l-2 border-cyan-400'
-      : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-100'
-  );
+const web3Items = [
+  { to: '/dashboard/staking',      icon: Coins,    label: 'Staking CAFM' },
+  { to: '/dashboard/dao',          icon: Vote,     label: 'Gouvernance DAO' },
+  { to: '/dashboard/launchpad',    icon: Rocket,   label: 'IDO Launchpad' },
+  { to: '/dashboard/bridge',       icon: Zap,      label: 'Cross-Chain Bridge' },
+  { to: '/dashboard/oracle',       icon: Activity, label: 'Oracle Prices' },
+  { to: '/dashboard/perpetuals',   icon: TrendingUp, label: 'Perpetuals Trading' },
+  { to: '/dashboard/options',      icon: Target,   label: 'Options Trading' },
+];
 
 export default function Layout() {
   const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
+  const { tenant, loadTenant } = useTenantStore();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isDark = theme === 'dark';
+
+  useEffect(() => {
+    loadTenant();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -50,17 +66,40 @@ export default function Layout() {
 
   const closeSidebar = () => setSidebarOpen(false);
 
+  const linkClass = ({ isActive }) =>
+    clsx(
+      'flex items-center gap-3 px-3 py-2.5 rounded-sm text-xs uppercase tracking-widest font-mono transition-colors',
+      isActive
+        ? 'bg-zinc-800 text-zinc-50 border-l-2 border-orange-500'
+        : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-100'
+    );
+
+  const orgName = tenant?.name || 'CAFM Pro';
+  const orgLogo = tenant?.logo || null;
+
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="p-6 border-b border-zinc-800">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5 text-cyan-400" />
-          </div>
+      <div className="p-5 border-b border-zinc-800">
+        <div className="flex items-center gap-3">
+          {orgLogo ? (
+            <img
+              src={orgLogo}
+              alt={orgName}
+              className="w-9 h-9 rounded-lg object-cover border border-zinc-700"
+            />
+          ) : (
+            <div className="w-9 h-9 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-orange-400" />
+            </div>
+          )}
           <div>
-            <h1 className="font-bold text-zinc-50 font-mono tracking-widest uppercase text-sm">CAFM Pro</h1>
-            <p className="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Facility Management</p>
+            <h1 className="font-bold text-zinc-50 font-mono tracking-widest uppercase text-sm leading-tight">
+              {orgName}
+            </h1>
+            <p className="text-[10px] text-orange-400/80 font-mono tracking-widest uppercase">
+              Facility Management
+            </p>
           </div>
         </div>
       </div>
@@ -84,11 +123,43 @@ export default function Layout() {
             {item.label}
           </NavLink>
         ))}
+
+        <div className="pt-4 pb-1">
+          <p className="text-[9px] uppercase tracking-[0.2em] font-bold text-zinc-600 px-3">Web3 & DeFi</p>
+        </div>
+
+        {web3Items.map((item) => (
+          <NavLink key={item.to} to={item.to} className={linkClass} onClick={closeSidebar}>
+            <item.icon className="w-4 h-4 shrink-0" />
+            {item.label}
+          </NavLink>
+        ))}
       </nav>
 
-      {/* User */}
-      <div className="p-4 border-t border-zinc-800">
-        <div className="flex items-center gap-3 mb-3">
+      {/* Footer: User + Theme Toggle */}
+      <div className="p-4 border-t border-zinc-800 space-y-3">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-between px-3 py-2 text-xs font-mono tracking-widest uppercase text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50 border border-zinc-800 rounded-sm transition"
+        >
+          <span className="flex items-center gap-2">
+            {isDark ? <Moon className="w-3.5 h-3.5 text-orange-400" /> : <Sun className="w-3.5 h-3.5 text-orange-400" />}
+            {isDark ? 'Mode Sombre' : 'Mode Clair'}
+          </span>
+          <div className={clsx(
+            'w-8 h-4 rounded-full transition-colors relative',
+            isDark ? 'bg-orange-500' : 'bg-zinc-600'
+          )}>
+            <div className={clsx(
+              'absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform',
+              isDark ? 'translate-x-4' : 'translate-x-0.5'
+            )} />
+          </div>
+        </button>
+
+        {/* User Info */}
+        <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-zinc-800 border border-zinc-700 rounded-sm flex items-center justify-center shrink-0">
             <span className="text-xs font-mono font-medium text-zinc-300">
               {user?.firstName?.[0]}{user?.lastName?.[0]}
@@ -157,12 +228,10 @@ export default function Layout() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-mono text-xs uppercase tracking-widest text-zinc-300">CAFM Pro</span>
-          <div className="w-9 h-9 bg-zinc-800 border border-zinc-700 rounded-sm flex items-center justify-center">
-            <span className="text-xs font-mono text-zinc-300">
-              {user?.firstName?.[0]}{user?.lastName?.[0]}
-            </span>
-          </div>
+          <span className="font-mono text-xs uppercase tracking-widest text-zinc-300">{orgName}</span>
+          <button onClick={toggleTheme} className="p-2 text-zinc-400 hover:text-orange-400 transition-colors">
+            {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </button>
         </header>
 
         <main className="flex-1 overflow-y-auto bg-background">

@@ -1,5 +1,31 @@
 const tenantService = require('../services/tenant.service');
 
+exports.getMyTenant = async (req, res) => {
+  try {
+    if (!req.user.tenantId) return res.status(404).json({ error: 'Aucune organisation liée à votre compte' });
+    const tenant = await tenantService.getTenant(req.user.tenantId);
+    if (!tenant) return res.status(404).json({ error: 'Organisation introuvable' });
+    res.json(tenant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateMyTenant = async (req, res) => {
+  try {
+    if (!req.user.tenantId) return res.status(404).json({ error: 'Aucune organisation liée à votre compte' });
+    const allowed = ['name', 'logo', 'plan'];
+    const data = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) data[key] = req.body[key];
+    }
+    const tenant = await tenantService.updateTenant(req.user.tenantId, data);
+    res.json(tenant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.getTenants = async (req, res) => {
   try {
     const tenants = await tenantService.getAllTenants();

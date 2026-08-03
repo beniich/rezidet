@@ -28,6 +28,21 @@ model Tenant {
   tenantDomains     TenantDomain[]
   erpConnections    ERPConnection[]
   bimModels         BIMModel[]
+  subscription      Subscription?
+  invoices          Invoice[]
+  paymentMethods    PaymentMethod[]
+  usageRecords      UsageRecord[]
+  affiliateReferrals AffiliateReferral[]
+  marketplaceInstallations MarketplaceInstallation[]
+  serviceBookings   ServiceBooking[]
+  customerEvents    CustomerLifetimeEvent[]
+  promoRedemptions  PromoRedemption[]
+  creditAccount     CreditAccount?
+  cryptoPayments    CryptoPayment[]
+  cryptoBalances    CryptoBalance[]
+  stablecoinSub     StablecoinSubscription?
+  recurringInvoices RecurringInvoice[]
+  enterpriseQuotes  EnterpriseQuote[]
 }
 
 model TenantConfig {
@@ -73,6 +88,10 @@ model User {
   notifications     Notification[]
   notificationPref  NotificationPreference?
   inventoryMovements InventoryMovement[]
+  affiliatePartner  AffiliatePartner?
+  consultingBookings ServiceBooking[] @relation("Consultant")
+  promoRedemptions  PromoRedemption[]
+  assignedQuotes    EnterpriseQuote[]
 }
 
 model Building {
@@ -143,6 +162,11 @@ model Asset {
   erpAssetMappings ERPAssetMapping[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+
+  positionX  Float?
+  positionY  Float?
+  positionZ  Float?
+
 }
 
 model Sensor {
@@ -711,4 +735,767 @@ model CRMImportJob {
   userId         String
   completedAt    DateTime?
   createdAt      DateTime @default(now())
+}
+
+
+// ============== MONETIZATION ==============
+model Subscription {
+  id                    String   @id @default(uuid())
+  tenantId              String   @unique
+  tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stripeCustomerId      String?  @unique
+  stripeSubscriptionId  String?  @unique
+  stripePriceId         String?
+  stripeProductId       String?
+  plan                  String   @default("FREE")
+  status                String   @default("active")
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  trialEnd              DateTime?
+  cancelAtPeriodEnd     Boolean  @default(false)
+  canceledAt            DateTime?
+  apiCallsThisMonth     Int      @default(0)
+  storageUsedMb         Float    @default(0)
+  iotDevices            Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  stripeInvoiceId String?  @unique
+  number          String
+  status          String
+  amount          Float
+  currency        String   @default("EUR")
+  amountPaid      Float    @default(0)
+  periodStart     DateTime
+  periodEnd       DateTime
+  pdfUrl          String?
+  hostedInvoiceUrl String?
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model PaymentMethod {
+  id                String   @id @default(uuid())
+  tenantId          String
+  tenant            Tenant   @relation(fields: [tenantId], references: [id])
+  stripePaymentMethodId String @unique
+  type              String
+  brand             String?
+  last4             String?
+  expMonth          Int?
+  expYear           Int?
+  isDefault         Boolean  @default(false)
+  createdAt         DateTime @default(now())
+}
+
+model UsageRecord {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  metric          String
+  quantity        Float
+  unit            String
+  recordedAt      DateTime @default(now())
+  billingPeriod   String
+  @@index([tenantId, metric, billingPeriod])
+}
+
+model Coupon {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  stripeCouponId  String?  @unique
+  percentOff      Int?
+  amountOff       Float?
+  currency        String?
+  duration        String   @default("once")
+  durationMonths  Int?
+  maxRedemptions  Int?
+  timesRedeemed   Int      @default(0)
+  validFrom       DateTime @default(now())
+  validUntil      DateTime?
+  minAmount       Float?
+  applicablePlans String?
+  createdAt       DateTime @default(now())
+}
+
+model AffiliatePartner {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  referralCode    String   @unique
+  commissionRate  Float    @default(0.20)
+  totalEarned     Float    @default(0)
+  totalPaid       Float    @default(0)
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  referrals       AffiliateReferral[]
+  promoCodes      PromoCode[]
+}
+
+model AffiliateReferral {
+  id              String   @id @default(uuid())
+  partnerId       String
+  partner         AffiliatePartner @relation(fields: [partnerId], references: [id])
+  referredUserId  String
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  commissionEarned Float   @default(0)
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+  confirmedAt     DateTime?
+}
+
+model MarketplaceItem {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  description     String
+  longDescription String?
+  category        String
+  iconUrl         String?
+  screenshots     String?
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  pricingModel    String
+  price           Float    @default(0)
+  currency        String   @default("EUR")
+  installs        Int      @default(0)
+  rating          Float    @default(0)
+  reviews         Int      @default(0)
+  version         String   @default("1.0.0")
+  configSchema    String?
+  installCount    Int      @default(0)
+  status          String   @default("DRAFT")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  installations   MarketplaceInstallation[]
+  revenues        MarketplaceRevenue[]
+}
+
+model Vendor {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  description     String?
+  website         String?
+  logoUrl         String?
+  stripeAccountId String?  @unique
+  totalRevenue    Float    @default(0)
+  totalItems      Int      @default(0)
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  items           MarketplaceItem[]
+  accounts        VendorAccount[]
+  payouts         VendorPayout[]
+  balanceTransactions VendorBalanceTransaction[]
+  revenues        MarketplaceRevenue[]
+}
+
+model MarketplaceInstallation {
+  id              String   @id @default(uuid())
+  itemId          String
+  item            MarketplaceItem @relation(fields: [itemId], references: [id])
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  config          String?
+  status          String   @default("ACTIVE")
+  installedAt     DateTime @default(now())
+  @@unique([itemId, tenantId])
+}
+
+model MarketplaceRevenue {
+  id              String   @id @default(uuid())
+  itemId          String
+  item            MarketplaceItem @relation(fields: [itemId], references: [id])
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  tenantId        String
+  grossAmount     Float
+  platformFee     Float
+  vendorAmount    Float
+  stripePaymentId String?
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+}
+
+model Service {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  category        String
+  description     String
+  pricingType     String
+  price           Float
+  currency        String   @default("EUR")
+  duration        String?
+  deliverables    String?
+  prerequisites   String?
+  bookings        Int      @default(0)
+  rating          Float    @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  serviceBookings ServiceBooking[]
+}
+
+model ServiceBooking {
+  id              String   @id @default(uuid())
+  serviceId       String
+  service         Service  @relation(fields: [serviceId], references: [id])
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  scheduledAt     DateTime
+  status          String   @default("PENDING")
+  notes           String?
+  stripePaymentId String?
+  amount          Float
+  consultantId    String?
+  consultant      User?    @relation("Consultant", fields: [consultantId], references: [id])
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+}
+
+
+// ============== ENTERPRISE QUOTES ==============
+model EnterpriseQuote {
+  id              String   @id @default(uuid())
+  reference       String   @unique
+  tenantId        String?
+  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+  contactName     String
+  contactEmail    String
+  contactPhone    String?
+  companyName     String
+  companySize     String?
+  industry        String?
+  country         String?
+  userCount       Int      @default(50)
+  assetCount      Int      @default(500)
+  buildingCount   Int      @default(5)
+  selectedFeatures String?
+  monthlyBase     Float    @default(199)
+  perUserPrice    Float    @default(0)
+  setupFee        Float    @default(0)
+  totalMonthly    Float    @default(199)
+  totalYearly     Float    @default(2388)
+  discountPercent Int      @default(0)
+  contractMonths  Int      @default(12)
+  status          String   @default("DRAFT")
+  validUntil      DateTime
+  signedAt        DateTime?
+  activatedAt     DateTime?
+  assignedToId    String?
+  assignedTo      User?    @relation(fields: [assignedToId], references: [id])
+  history         String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
+// ============== FINANCIAL METRICS ==============
+model FinancialMetric {
+  id                  String   @id @default(uuid())
+  date                DateTime @unique
+  mrr                 Float    @default(0)
+  arr                 Float    @default(0)
+  totalCustomers      Int      @default(0)
+  payingCustomers     Int      @default(0)
+  trialingCustomers   Int      @default(0)
+  churnedCustomers    Int      @default(0)
+  churnRate           Float    @default(0)
+  newRevenue          Float    @default(0)
+  expansionRevenue    Float    @default(0)
+  contractionRevenue  Float    @default(0)
+  churnedRevenue      Float    @default(0)
+  avgLtv              Float    @default(0)
+  avgCustomerLifetime Float    @default(0)
+  cohortData          String?
+  createdAt           DateTime @default(now())
+}
+
+model CustomerLifetimeEvent {
+  id             String   @id @default(uuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  type           String
+  plan           String
+  amount         Float?
+  metadata       String?
+  occurredAt     DateTime @default(now())
+  @@index([tenantId, occurredAt])
+}
+
+// ============== PROMO CODES ==============
+model PromoCode {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  discountType    String
+  discountValue   Float
+  currency        String   @default("EUR")
+  durationType    String   @default("once")
+  durationMonths  Int?
+  applicablePlans String?
+  minAmount       Float?
+  maxUses         Int?
+  currentUses     Int      @default(0)
+  maxUsesPerUser  Int      @default(1)
+  affiliateId     String?
+  affiliate       AffiliatePartner? @relation(fields: [affiliateId], references: [id])
+  campaign        String?
+  validFrom       DateTime @default(now())
+  validUntil      DateTime?
+  totalRevenue    Float    @default(0)
+  createdById     String?
+  createdAt       DateTime @default(now())
+  redemptions     PromoRedemption[]
+}
+
+model PromoRedemption {
+  id              String   @id @default(uuid())
+  promoCodeId     String
+  promoCode       PromoCode @relation(fields: [promoCodeId], references: [id])
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  discountAmount  Float
+  originalAmount  Float
+  finalAmount     Float
+  stripeCouponId  String?
+  redeemedAt      DateTime @default(now())
+  @@unique([promoCodeId, tenantId])
+}
+
+// ============== RECURRING INVOICES ==============
+model RecurringInvoice {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  invoiceNumber   String   @unique
+  periodStart     DateTime
+  periodEnd       DateTime
+  billingDate     DateTime
+  baseAmount      Float
+  additionalAmount Float    @default(0)
+  discountAmount  Float    @default(0)
+  subtotal        Float
+  taxRate         Float    @default(20)
+  taxAmount       Float
+  totalAmount     Float
+  currency        String   @default("EUR")
+  lineItems       String
+  status          String   @default("DRAFT")
+  paymentMethod   String?
+  paidAt          DateTime?
+  paymentRef      String?
+  remindersSent   Int      @default(0)
+  lastReminderAt  DateTime?
+  pdfUrl          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@index([tenantId, status])
+}
+
+
+// ============== STRIPE CONNECT ==============
+model VendorAccount {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  stripeAccountId String   @unique
+  accountType     String   @default("express")
+  country         String   @default("FR")
+  defaultCurrency String   @default("eur")
+  chargesEnabled  Boolean  @default(false)
+  payoutsEnabled  Boolean  @default(false)
+  detailsSubmitted Boolean @default(false)
+  requirementsDue String
+  availableBalance Float   @default(0)
+  pendingBalance   Float   @default(0)
+  payoutSchedule   String  @default("daily")
+  minimumPayout    Float   @default(10)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  payouts         VendorPayout[]
+}
+
+model VendorPayout {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  accountId       String
+  account         VendorAccount @relation(fields: [accountId], references: [id])
+  amount          Float
+  currency        String   @default("EUR")
+  stripePayoutId  String?  @unique
+  status          String   @default("PENDING")
+  arrivalDate     DateTime?
+  method          String   @default("standard")
+  failureCode     String?
+  failureMessage  String?
+  createdAt       DateTime @default(now())
+}
+
+model VendorBalanceTransaction {
+  id              String   @id @default(uuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  type            String
+  amount          Float
+  currency        String   @default("EUR")
+  description     String?
+  reference       String?
+  availableOn     DateTime?
+  createdAt       DateTime @default(now())
+}
+
+// ============== CREDIT / DEPOSIT ==============
+model CreditAccount {
+  id              String   @id @default(uuid())
+  tenantId        String   @unique
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  balance         Float    @default(0)
+  reservedBalance Float    @default(0)
+  currency        String   @default("EUR")
+  autoRechargeEnabled Boolean @default(false)
+  autoRechargeThreshold Float @default(100)
+  autoRechargeAmount    Float @default(500)
+  autoRechargePaymentMethodId String?
+  maxBalance      Float    @default(10000)
+  minBalance      Float    @default(0)
+  totalDeposited  Float    @default(0)
+  totalSpent      Float    @default(0)
+  lifetimeUsage   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  transactions    CreditTransaction[]
+}
+
+model CreditTransaction {
+  id              String   @id @default(uuid())
+  accountId       String
+  account         CreditAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  type            String
+  amount          Float
+  balanceAfter    Float
+  currency        String   @default("EUR")
+  description     String?
+  category        String?
+  reference       String?
+  stripePaymentIntentId String?
+  status          String   @default("COMPLETED")
+  createdAt       DateTime @default(now())
+  @@index([accountId, type, createdAt])
+}
+
+model UsagePricing {
+  id              String   @id @default(uuid())
+  metric          String   @unique
+  unit            String
+  pricingType     String   @default("tiered")
+  unitCost        Float    @default(0)
+  includedQuota   Int      @default(0)
+  overageCost     Float    @default(0.01)
+  hardLimit       Int?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============== CRYPTO ==============
+model CryptoPayment {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  coinbaseChargeId String  @unique
+  chargeCode      String?
+  amount          Float
+  amountCrypto    String?
+  currency        String   @default("EUR")
+  cryptoCurrency  String?
+  status          String   @default("PENDING")
+  network         String?
+  txHash          String?
+  blockNumber     Int?
+  confirmations   Int      @default(0)
+  description     String?
+  metadata        String?
+  expiresAt       DateTime
+  confirmedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@index([tenantId, status])
+}
+
+model CryptoBalance {
+  id              String   @id @default(uuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  currency        String
+  balance         Float    @default(0)
+  receiveAddress  String?
+  network         String?
+  updatedAt       DateTime @updatedAt
+}
+
+model StablecoinSubscription {
+  id              String   @id @default(uuid())
+  tenantId        String   @unique
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan            String
+  amountUsdc      Float
+  billingPeriod   String   @default("monthly")
+  network         String   @default("polygon")
+  paymentToken    String   @default("USDC")
+  paymentTokenAddress String
+  subscriberAddress String
+  recipientAddress String
+  status          String   @default("PENDING")
+  nextPaymentAt   DateTime
+  lastPaymentAt   DateTime?
+  totalPaid       Float    @default(0)
+  failedAttempts  Int      @default(0)
+  maxRetries      Int      @default(3)
+  contractAddress String?
+  txHash          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  payments        StablecoinPayment[]
+}
+
+model StablecoinPayment {
+  id              String   @id @default(uuid())
+  subscriptionId  String
+  subscription    StablecoinSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  txHash          String   @unique
+  blockNumber     Int?
+  network         String
+  fromAddress     String
+  toAddress       String
+  tokenAddress    String
+  amountUsdc      Float
+  amountToken     String
+  gasFee          String
+  status          String   @default("PENDING")
+  confirmations   Int      @default(0)
+  requiredConfirmations Int @default(12)
+  periodStart     DateTime
+  periodEnd       DateTime
+  blockExplorerUrl String?
+  confirmedAt     DateTime?
+  failedAt        DateTime?
+  failureReason   String?
+  createdAt       DateTime @default(now())
+  @@index([subscriptionId, status])
+  @@index([txHash])
+}
+
+
+// ============== STAKING ==============
+model StakingPosition {
+  id              String   @id @default(uuid())
+  userAddress     String   @unique
+  amount          Float    @default(0)
+  lockEndTime     DateTime?
+  apy             Float    @default(1.0)
+  totalClaimed    Float    @default(0)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StakingEvent {
+  id              String   @id @default(uuid())
+  userAddress     String
+  type            String
+  amount          Float
+  txHash          String?  @unique
+  createdAt       DateTime @default(now())
+  @@index([userAddress, createdAt])
+}
+
+// ============== DAO ==============
+model DAOProposal {
+  id              String   @id @default(uuid())
+  onChainId       Int?     @unique
+  tenantId        String?
+  proposer        String
+  title           String
+  description     String
+  category        String
+  actions         String
+  forVotes        Float    @default(0)
+  againstVotes    Float    @default(0)
+  abstainVotes    Float    @default(0)
+  status          String   @default("PENDING")
+  txHash          String?
+  startsAt        DateTime @default(now())
+  endsAt          DateTime
+  executedAt      DateTime?
+  createdAt       DateTime @default(now())
+  votes           DAOVote[]
+}
+
+model DAOVote {
+  id              String   @id @default(uuid())
+  proposalId      String
+  proposal        DAOProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  voterAddress    String
+  support         Int
+  weight          Float
+  reason          String?
+  txHash          String?
+  createdAt       DateTime @default(now())
+  @@unique([proposalId, voterAddress])
+}
+
+// ============== IDO LAUNCHPAD ==============
+model IDOProject {
+  id              String   @id @default(uuid())
+  name            String
+  symbol          String
+  description     String
+  logoUrl         String?
+  websiteUrl      String?
+  whitepaperUrl   String?
+  tokenAddress    String?
+  totalSupply     Float
+  tokensForSale   Float
+  pricePerToken   Float
+  hardCap         Float
+  softCap         Float
+  startTime       DateTime
+  endTime         DateTime
+  tgePercent      Float    @default(20)
+  vestingMonths   Int      @default(12)
+  cliffMonths     Int      @default(1)
+  status          String   @default("UPCOMING")
+  totalRaised     Float    @default(0)
+  participants    Int      @default(0)
+  kycRequired     Boolean  @default(true)
+  whitelistOnly   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  contributions   IDOContribution[]
+}
+
+model IDOContribution {
+  id              String   @id @default(uuid())
+  projectId       String
+  project         IDOProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  investorAddress String
+  amountUsdc      Float
+  tokensAmount    Float
+  txHash          String?  @unique
+  status          String   @default("PENDING")
+  claimedTokens   Float    @default(0)
+  vestingSchedule String?
+  createdAt       DateTime @default(now())
+}
+
+
+// ============== ORACLE ==============
+model PriceHistory {
+  id          String   @id @default(uuid())
+  pair        String
+  chainId     Int
+  price       Float
+  source      String   @default("chainlink")
+  timestamp   DateTime @default(now())
+  @@index([pair, timestamp])
+}
+
+model PriceAlert {
+  id          String   @id @default(uuid())
+  userId      String?
+  pair        String
+  chainId     Int      @default(1)
+  threshold   Float
+  direction   String
+  active      Boolean  @default(true)
+  triggeredAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+// ============== BRIDGE ==============
+model BridgeTransfer {
+  id                String   @id @default(uuid())
+  nonce             Int      @unique
+  fromChainId       Int
+  toChainId         Int
+  senderAddress     String
+  recipientAddress  String
+  amount            Float
+  token             String   @default("USDC")
+  status            String   @default("PENDING")
+  estimatedArrival  DateTime?
+  txHash            String?
+  confirmedAt       DateTime?
+  destinationTxHash String?
+  completedAt       DateTime?
+  createdAt         DateTime @default(now())
+}
+
+// ============== P2P EXCHANGE ==============
+model P2POrder {
+  id              String   @id @default(uuid())
+  makerAddress    String
+  takerAddress    String?
+  type            String
+  tokenAddress    String
+  tokenSymbol     String
+  tokenDecimals   Int      @default(18)
+  amount          Float
+  remainingAmount Float
+  pricePerToken   Float
+  totalPrice      Float
+  paymentToken    String   @default("USDC")
+  paymentDecimals Int      @default(6)
+  escrowAddress   String?
+  expiresAt       DateTime
+  status          String   @default("OPEN")
+  paymentMethod   String   @default("ESCROW")
+  fiatCurrency    String?
+  paymentDetails  String?
+  createdAt       DateTime @default(now())
+  filledAt        DateTime?
+  canceledAt      DateTime?
+  trades          P2PTrade[]
+  @@index([type, status, tokenAddress])
+  @@index([makerAddress, status])
+}
+
+model P2PTrade {
+  id              String   @id @default(uuid())
+  orderId         String
+  order           P2POrder @relation(fields: [orderId], references: [id])
+  buyerAddress    String
+  sellerAddress   String
+  tokenAmount     Float
+  totalPrice      Float
+  txHash          String?
+  status          String   @default("PENDING")
+  disputeReason   String?
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+}
+
+
+// ============== OPTIONS ==============
+model Option {
+  id          String   @id @default(uuid())
+  writer      String
+  holder      String?
+  optionType  String   // CALL or PUT
+  underlying  String
+  strikePrice Float
+  premium     Float
+  amount      Float
+  expiration  DateTime
+  status      String   @default("OPEN")
+  createdAt   DateTime @default(now())
 }

@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { nexusApi } from '../services/nexusApi';
+import api from '../services/api';
+import { CircuitBackground } from '../sovereign-site/components/CircuitBackground';
+import { Mail, Lock, Building2, User, Loader2, Key } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuthStore } from '../store/authStore';
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [deviceName, setDeviceName] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    orgName: ''
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -13,80 +21,129 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      await nexusApi.registerDevice({
-        email,
-        password,
-        firstName: deviceName,
-        lastName: 'Device',
-        role: 'ADMIN'
+      await api.post('/auth/register', {
+        ...formData,
+        role: 'SUPERADMIN' // Assuming self-registration gets a SUPERADMIN of their own org for now
       });
-      alert('Enregistrement réussi de l\'appareil souverain.');
+      toast.success('Compte organisation créé avec succès !');
       navigate('/login');
     } catch (err) {
-      alert("Erreur lors de l'enregistrement : " + (err.response?.data?.error || err.message));
+      toast.error("Erreur : " + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center relative overflow-hidden font-sans">
-      <div className="absolute top-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-emerald-900/20 blur-[120px]" />
-      <div className="absolute bottom-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-blue-900/30 blur-[120px]" />
+    <div className="min-h-screen bg-[#0d041e] text-white flex items-center justify-center relative overflow-hidden font-sans">
+      <CircuitBackground className="absolute inset-0 z-0 opacity-50" />
 
-      <div className="w-full max-w-md p-8 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 shadow-2xl relative z-10">
+      <div className="w-full max-w-md p-8 rounded-3xl glass-card border border-white/10 shadow-2xl relative z-10 glow-orange-sm">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-400 to-blue-400 bg-clip-text text-transparent">
-            Join Sovereign Nexus
+          <div className="w-16 h-16 rounded-2xl glass-card flex items-center justify-center mx-auto mb-4 border border-orange-500/30 glow-orange">
+            <Building2 className="w-8 h-8 text-orange-400" />
+          </div>
+          <h2 className="text-3xl font-display font-bold tracking-widest uppercase text-glow-orange">
+            Rejoindre CAFM
           </h2>
-          <p className="text-slate-400 mt-2 text-sm">Enregistrez un nouvel appareil ou nœud de sécurité</p>
+          <p className="text-orange-400/80 mt-2 text-xs font-mono tracking-widest uppercase">
+            Créer votre organisation Sovereign
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Identifiant Unique de l'Appareil</label>
-            <input
-              type="text"
-              value={deviceName}
-              onChange={(e) => setDeviceName(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition text-slate-100 placeholder-slate-600"
-              placeholder="NEXUS-NODE-001"
-            />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Prénom</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition text-white font-mono text-xs"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Nom</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="text"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition text-white font-mono text-xs"
+                />
+              </div>
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Adresse Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition text-slate-100 placeholder-slate-600"
-              placeholder="admin@nexus.sovereign"
-            />
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Nom de l'organisation</label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="text"
+                value={formData.orgName}
+                onChange={(e) => setFormData({ ...formData, orgName: e.target.value })}
+                required
+                className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition text-white font-mono text-xs"
+                placeholder="Ex: Sovereign Corp"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Clé d'Accès Sécurisée</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition text-slate-100 placeholder-slate-600"
-              placeholder="••••••••••••"
-            />
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+                className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition text-white font-mono text-xs"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-1">Mot de passe</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition text-white font-mono text-xs"
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-lg font-medium text-white transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-500/20"
+            className="w-full py-3 btn-gradient-orange rounded-xl font-mono tracking-widest uppercase text-xs text-white transition-all transform hover:scale-[1.02] shadow-lg glow-orange mt-6 flex justify-center items-center gap-2"
           >
-            {loading ? "Enregistrement en cours..." : "Enregistrer l'appareil"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+              <>
+                <Key className="w-4 h-4" />
+                Créer l'organisation
+              </>
+            )}
           </button>
         </form>
+
+        <p className="text-center mt-6 text-xs text-zinc-400 font-mono">
+          Déjà un compte ?{' '}
+          <button onClick={() => navigate('/login')} className="text-orange-400 hover:text-orange-300">
+            Se connecter
+          </button>
+        </p>
       </div>
     </div>
   );

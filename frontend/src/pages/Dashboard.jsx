@@ -141,13 +141,12 @@ export default function Dashboard() {
 
   const { kpis, charts, lists } = data;
 
-  // Adapt charts data for dark theme
   const darkAssetStatus = charts.assetStatus.map(item => {
-    let color = '#a1a1aa'; // default zinc
+    let color = 'var(--color-zinc-600)'; // default zinc
     if (item.name === 'Opérationnel') color = '#10b981'; // green
     if (item.name === 'En maintenance') color = '#f59e0b'; // orange
     if (item.name === 'En panne') color = '#ef4444'; // red
-    if (item.name === 'Retiré') color = '#52525b'; // zinc-600
+    if (item.name === 'Retiré') color = 'var(--color-zinc-400)'; // zinc-600
     return { ...item, color };
   });
 
@@ -279,14 +278,14 @@ export default function Dashboard() {
                   <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-              <XAxis dataKey="day" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace', textTransform: 'uppercase'}} />
-              <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-zinc-800)" vertical={false} />
+              <XAxis dataKey="day" stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace', textTransform: 'uppercase'}} />
+              <YAxis stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: 0, color: '#f4f4f5', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }}
-                itemStyle={{ color: '#f4f4f5' }}
+                contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-zinc-800)', borderRadius: 0, color: 'var(--color-zinc-50)', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }}
+                itemStyle={{ color: 'var(--color-zinc-50)' }}
               />
-              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa' }} />
+              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: 'var(--color-zinc-400)' }} />
               <Area
                 type="step"
                 dataKey="created"
@@ -323,8 +322,8 @@ export default function Dashboard() {
                   <Cell key={i} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: 0, color: '#f4f4f5', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} />
-              <Legend verticalAlign="bottom" iconType="square" wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa' }} />
+              <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-zinc-800)', borderRadius: 0, color: 'var(--color-zinc-50)', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} />
+              <Legend verticalAlign="bottom" iconType="square" wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: 'var(--color-zinc-400)' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -342,11 +341,11 @@ export default function Dashboard() {
                   <stop offset="95%" stopColor="#a1a1aa" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-              <XAxis dataKey="month" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace', textTransform: 'uppercase'}} />
-              <YAxis stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
-              <Tooltip contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: 0, color: '#f4f4f5', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} />
-              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-zinc-800)" vertical={false} />
+              <XAxis dataKey="month" stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace', textTransform: 'uppercase'}} />
+              <YAxis stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
+              <Tooltip contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-zinc-800)', borderRadius: 0, color: 'var(--color-zinc-50)', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} />
+              <Legend wrapperStyle={{ fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase', color: 'var(--color-zinc-400)' }} />
               <Area
                 type="monotone"
                 dataKey="elec"
@@ -364,7 +363,7 @@ export default function Dashboard() {
                 dot={false}
                 yAxisId="right"
               />
-              <YAxis yAxisId="right" orientation="right" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
+              <YAxis yAxisId="right" orientation="right" stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -373,18 +372,18 @@ export default function Dashboard() {
           <SectionHeader title="Maintenance / Catégorie" action="Rapport" />
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={charts.maintenanceCostsByCategory} layout="vertical" margin={{ left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" horizontal={false} />
-              <XAxis type="number" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-zinc-800)" horizontal={false} />
+              <XAxis type="number" stroke="var(--color-zinc-500)" fontSize={10} tickLine={false} axisLine={false} tick={{fontFamily: 'monospace'}} />
               <YAxis
                 dataKey="category"
                 type="category"
-                stroke="#71717a"
+                stroke="var(--color-zinc-500)"
                 fontSize={10}
                 width={80}
                 tickLine={false} axisLine={false}
                 tick={{fontFamily: 'monospace', textTransform: 'uppercase'}}
               />
-              <Tooltip formatter={(v) => `${v.toLocaleString('fr-FR')} €`} contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: 0, color: '#f4f4f5', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} cursor={{fill: '#27272a', opacity: 0.4}} />
+              <Tooltip formatter={(v) => `${v.toLocaleString('fr-FR')} €`} contentStyle={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-zinc-800)', borderRadius: 0, color: 'var(--color-zinc-50)', fontFamily: 'monospace', fontSize: '10px', textTransform: 'uppercase' }} cursor={{fill: 'var(--color-zinc-800)', opacity: 0.4}} />
               <Bar dataKey="cost" fill="#d4d4d8" barSize={20} />
             </BarChart>
           </ResponsiveContainer>

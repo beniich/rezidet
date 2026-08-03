@@ -119,6 +119,7 @@ exports.getAll = async (req, res) => {
     if (status) where.status = status;
     if (category) where.category = category;
     if (buildingId) where.buildingId = buildingId;
+    if (req.user?.tenantId) where.tenantId = req.user.tenantId;
 
     const assets = await prisma.asset.findMany({
       where,

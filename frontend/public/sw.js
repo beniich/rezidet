@@ -1,127 +1,122 @@
+/**
+ * Service Worker CAFM Pro v2
+ * Stratégie: Offline-first + Background Sync + Push Notifications
+ */
+
 const CACHE_VERSION = 'cafm-v2';
-const RUNTIME_CACHE = 'cafm-runtime-v2';
+const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
+const PRECACHE_URLS = ['/', '/index.html', '/manifest.json', '/offline.html'];
 
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/badge-72x72.png',
-  '/icons/apple-touch-icon.png'
-];
-
-// ── Install: precache static assets ──────────────────────────────────────────
+// ===== INSTALL =====
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION)
-      .then(cache => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
-      .catch(err => console.warn('[SW] Precache failed (non-blocking):', err))
-  );
-});
-
-// ── Activate: purge old caches ────────────────────────────────────────────────
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key !== CACHE_VERSION && key !== RUNTIME_CACHE)
-          .map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
-});
-
-// ── Fetch: Network-first, cache fallback ──────────────────────────────────────
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Never cache: API calls, socket.io, external resources
-  if (
-    url.pathname.startsWith('/api/') ||
-    url.pathname.startsWith('/socket.io') ||
-    url.origin !== self.location.origin
-  ) {
-    return; // let browser handle it
-  }
-
-  // HTML pages: Network-first (SPA navigation)
-  if (request.headers.get('accept')?.includes('text/html')) {
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          const clone = response.clone();
-          caches.open(RUNTIME_CACHE).then(cache => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => caches.match('/index.html'))
-    );
-    return;
-  }
-
-  // Static assets: Cache-first
-  event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(response => {
-        if (response.status === 200 && response.type !== 'opaque') {
-          const clone = response.clone();
-          caches.open(RUNTIME_CACHE).then(cache => cache.put(request, clone));
-        }
-        return response;
-      }).catch(() => {
-        // Offline fallback for images
-        if (request.destination === 'image') return caches.match('/icons/icon-192x192.png');
-      });
+    caches.open(STATIC_CACHE).then(async (cache) => {
+      for (const url of PRECACHE_URLS) {
+        try { await cache.add(url); } catch {}
+      }
+      self.skipWaiting();
     })
   );
 });
 
-// ── Push Notifications ────────────────────────────────────────────────────────
-self.addEventListener('push', (event) => {
-  let data = { title: 'CAFM Pro', body: 'Nouvelle notification', url: '/' };
-  try {
-    data = { ...data, ...event.data?.json() };
-  } catch (_) {}
-
+// ===== ACTIVATE =====
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
+    Promise.all([
+      caches.keys().then(keys =>
+        Promise.all(keys.filter(k => !k.startsWith(CACHE_VERSION)).map(k => caches.delete(k)))
+      ),
+      self.clients.claim()
+    ])
+  );
+});
+
+// ===== FETCH =====
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  if (request.method !== 'GET') return;
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(networkFirstWithCache(request));
+    return;
+  }
+  if (request.mode === 'navigate') {
+    event.respondWith(navigationHandler(request));
+    return;
+  }
+  event.respondWith(cacheFirst(request));
+});
+
+async function networkFirstWithCache(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    return new Response(JSON.stringify({ offline: true }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function navigationHandler(request) {
+  try { return await fetch(request); }
+  catch {
+    return (await caches.match(request)) ?? caches.match('/offline.html');
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    return new Response('Offline', { status: 503 });
+  }
+}
+
+// ===== BACKGROUND SYNC =====
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-data') {
+    event.waitUntil(
+      self.clients.matchAll().then(clients =>
+        clients.forEach(c => c.postMessage({ type: 'sync-request' }))
+      )
+    );
+  }
+});
+
+// ===== PUSH NOTIFICATIONS =====
+self.addEventListener('push', (event) => {
+  const data = event.data?.json() ?? {};
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'CAFM Pro', {
+      body: data.body || '',
       icon: '/icons/icon-192x192.png',
-      badge: '/icons/badge-72x72.png',
-      tag: data.tag || 'cafm-notification',
-      renotify: true,
-      data: { url: data.url },
-      vibrate: [200, 100, 200],
+      badge: '/icons/icon-72x72.png',
+      tag: data.tag || 'cafm-default',
+      data: { url: data.url || '/' },
+      vibrate: data.urgent ? [200, 100, 200, 100, 200] : [100],
       actions: data.actions || []
     })
   );
 });
 
-// ── Notification click ────────────────────────────────────────────────────────
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || '/';
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then(clientList => {
-        const existing = clientList.find(c => c.url.includes(self.location.origin) && 'focus' in c);
-        if (existing) return existing.focus().then(c => c.navigate(targetUrl));
-        return clients.openWindow(targetUrl);
-      })
-  );
-});
-
-// ── Background sync (queued mutations) ───────────────────────────────────────
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'cafm-sync') {
-    event.waitUntil(
-      // Placeholder: implement offline mutation queue here
-      Promise.resolve()
-    );
+  if (event.notification.data?.url) {
+    event.waitUntil(clients.openWindow(event.notification.data.url));
   }
 });

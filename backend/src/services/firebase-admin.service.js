@@ -7,7 +7,7 @@ let app;
  * Supporte : GOOGLE_APPLICATION_CREDENTIALS (fichier) OU variables d'env individuelles
  */
 const initFirebaseAdmin = () => {
-  if (admin.apps.length > 0) return admin.apps[0];
+  if (admin.apps && admin.apps.length > 0) return admin.apps[0];
 
   const projectId = process.env.FIREBASE_PROJECT_ID || 'tonal-legacy-v07pf';
 

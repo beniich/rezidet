@@ -4,6 +4,9 @@ const { authMiddleware, requireRole } = require('../middleware/auth.middleware')
 
 router.use(authMiddleware);
 
+router.get('/me', ctrl.getMyTenant);
+router.put('/me', ctrl.updateMyTenant);
+
 router.get('/', ctrl.getTenants);
 router.get('/:id', ctrl.getTenantById);
 router.post('/', requireRole('ADMIN'), ctrl.createTenant);
