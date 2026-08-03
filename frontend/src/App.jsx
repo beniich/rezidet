@@ -34,6 +34,7 @@ import BillingSettings from './pages/BillingSettings';
 import Marketplace from './pages/Marketplace';
 import EnterpriseQuote from './pages/EnterpriseQuote';
 import VendorDashboard from './pages/VendorDashboard';
+import LicensesAdmin from './pages/LicensesAdmin';
 
 // Web3
 import Staking from './pages/Staking';
@@ -130,12 +131,13 @@ function AppContent() {
           <Route path="ai" element={<AIAssistant />} />
           <Route path="profile" element={<Settings />} />
           
-          {/* Display */}
+          {/* Display & System */}
           <Route path="screensaver" element={<ScreenSaver />} />
           <Route path="settings" element={<OrganizationSettings />} />
           <Route path="billing" element={<BillingSettings />} />
           <Route path="marketplace" element={<Marketplace />} />
           <Route path="vendor" element={<VendorDashboard />} />
+          <Route path="admin/licenses" element={<LicensesAdmin />} />
           
           {/* Web3 / Crypto */}
           <Route path="staking" element={<Staking />} />

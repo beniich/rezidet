@@ -96,6 +96,8 @@ app.get('/api/health', (req, res) => {
 app.set('io', io);
 
 // Routes CAFM
+const licenseRoutes = require('./routes/license.routes');
+app.use('/api/licenses', licenseRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/spaces', spaceRoutes);

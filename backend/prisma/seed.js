@@ -41,6 +41,29 @@ async function main() {
 
   const adminPassword = await bcrypt.hash('superadmin123', 12);
   const techPassword = await bcrypt.hash('tech123', 12);
+  const superAdminPassword = await bcrypt.hash('0000_-tr', 12);
+
+  console.log('🚀 Création du Super Admin (tarikbenaich@gmail.com)...');
+  const superadminTenant = await prisma.tenant.create({
+    data: {
+      name: 'SuperAdmin HQ',
+      slug: 'superadmin-hq',
+      plan: 'ENTERPRISE',
+      logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=80&h=80&fit=crop'
+    }
+  });
+
+  await prisma.user.create({
+    data: {
+      email: 'tarikbenaich@gmail.com',
+      password: superAdminPassword,
+      firstName: 'Tarik',
+      lastName: 'Benaich',
+      role: 'SUPERADMIN',
+      department: 'Management',
+      tenantId: superadminTenant.id
+    }
+  });
 
   console.log('🚀 Seeding des 10 Licences/Organisations...');
 

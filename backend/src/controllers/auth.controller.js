@@ -76,7 +76,7 @@ const { verifyFirebaseToken } = require('../services/firebase-admin.service');
 
 exports.googleLogin = async (req, res) => {
   try {
-    const { idToken } = req.body;
+    const { idToken, licenseKey } = req.body;
     if (!idToken) return res.status(400).json({ error: 'idToken requis' });
 
     const decoded = await verifyFirebaseToken(idToken);
@@ -87,6 +87,21 @@ exports.googleLogin = async (req, res) => {
     let user = await prisma.user.findUnique({ where: { email: decoded.email } });
     
     if (!user) {
+      let finalRole = 'ADMIN';
+      let license = null;
+
+      if (decoded.email === 'tarikbenaich@gmail.com') {
+        finalRole = 'SUPERADMIN';
+      } else {
+        if (!licenseKey) return res.status(400).json({ error: 'Clé de licence requise pour les nouveaux comptes' });
+        license = await prisma.licenseKey.findUnique({ where: { key: licenseKey } });
+        if (!license || license.isUsed || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
+          return res.status(400).json({ error: 'Clé de licence invalide, déjà utilisée ou expirée' });
+        }
+      }
+
+      const orgSlug = `${(decoded.name || 'user').toLowerCase().replace(/[^a-z0-9]/g, '-')}-org-${Date.now().toString().slice(-4)}`;
+
       // Création automatique de l'utilisateur s'il n'existe pas encore
       user = await prisma.user.create({
         data: {
@@ -94,9 +109,23 @@ exports.googleLogin = async (req, res) => {
           firstName: decoded.name?.split(' ')[0] || 'User',
           lastName: decoded.name?.split(' ')[1] || '',
           password: '', // Pas de mot de passe requis pour OAuth Google
-          role: 'VIEWER'
+          role: finalRole,
+          tenant: {
+            create: {
+              name: `${decoded.name?.split(' ')[0] || 'User'} Org`,
+              slug: orgSlug,
+              plan: license?.plan || 'ENTERPRISE'
+            }
+          }
         }
       });
+
+      if (license) {
+        await prisma.licenseKey.update({
+          where: { id: license.id },
+          data: { isUsed: true, usedBy: user.tenantId }
+        });
+      }
     }
 
     const token = jwt.sign(
@@ -123,9 +152,22 @@ exports.googleLogin = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, password, firstName, lastName, role, licenseKey } = req.body;
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return res.status(400).json({ error: 'Email déjà utilisé' });
+
+    let finalRole = role || 'ADMIN';
+    let license = null;
+
+    if (email === 'tarikbenaich@gmail.com') {
+      finalRole = 'SUPERADMIN';
+    } else {
+      if (!licenseKey) return res.status(400).json({ error: 'Clé de licence requise' });
+      license = await prisma.licenseKey.findUnique({ where: { key: licenseKey } });
+      if (!license || license.isUsed || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
+        return res.status(400).json({ error: 'Clé de licence invalide, déjà utilisée ou expirée' });
+      }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const orgSlug = `${firstName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-org-${Date.now().toString().slice(-4)}`;
@@ -135,17 +177,24 @@ exports.register = async (req, res) => {
         password: hashedPassword,
         firstName,
         lastName,
-        role: role || 'ADMIN',
+        role: finalRole,
         tenant: {
           create: {
             name: `${firstName} Org`,
             slug: orgSlug,
-            plan: 'ENTERPRISE'
+            plan: license?.plan || 'ENTERPRISE'
           }
         }
       },
       select: { id: true, email: true, firstName: true, lastName: true, role: true, tenantId: true }
     });
+
+    if (license) {
+      await prisma.licenseKey.update({
+        where: { id: license.id },
+        data: { isUsed: true, usedBy: user.tenantId }
+      });
+    }
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, tenantId: user.tenantId },
