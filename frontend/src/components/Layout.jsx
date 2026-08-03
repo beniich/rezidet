@@ -196,8 +196,8 @@ export default function Layout() {
   return (
     <div className="flex h-screen bg-background text-zinc-50 font-sans">
 
-      {/* ── Desktop sidebar ─────────────────────────────────────────────────── */}
-      <aside className="hidden md:flex w-64 bg-surface border-r border-zinc-800 flex-col shrink-0">
+      {/* ── Desktop/Tablet sidebar ──────────────────────────────────────────── */}
+      <aside className="hidden md:flex w-56 lg:w-64 bg-surface border-r border-zinc-800 flex-col shrink-0 transition-all duration-300">
         <SidebarContent />
       </aside>
 
@@ -244,7 +244,7 @@ export default function Layout() {
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-background relative">
+        <main className="flex-1 overflow-y-auto bg-background relative p-4 md:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

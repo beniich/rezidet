@@ -152,7 +152,7 @@ export default function Dashboard() {
 
   // ============== RENDU PRINCIPAL ==============
   return (
-    <div className="p-8 bg-background min-h-full font-sans">
+    <div className="p-4 md:p-6 lg:p-8 bg-background min-h-full font-sans">
       {/* ============== EN-TÊTE ============== */}
       <div className="flex items-center justify-between mb-8">
         <div>

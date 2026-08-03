@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 export const useThemeStore = create(
   persist(
     (set) => ({
-      theme: 'dark', // default theme is dark
+      theme: 'light', // default theme is light
       toggleTheme: () => set((state) => {
         const nextTheme = state.theme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', nextTheme);
