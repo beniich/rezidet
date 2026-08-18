@@ -14,6 +14,9 @@ model Tenant {
   slug        String   @unique
   plan        String   @default("ENTERPRISE") // FREE, PRO, ENTERPRISE
   logo        String?
+  maxUsers    Int      @default(10)
+  maxAssets   Int      @default(100)
+  licenseKeyId String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -44,6 +47,7 @@ model Tenant {
   stablecoinSub     StablecoinSubscription?
   recurringInvoices RecurringInvoice[]
   enterpriseQuotes  EnterpriseQuote[]
+  usedLicenses      LicenseKey[] @relation("TenantLicenses")
 }
 
 model TenantConfig {
@@ -603,7 +607,7 @@ model CRMUser {
   trialEndsAt     DateTime?
   subscriptionId  String?
 
-  // ─── Stripe ───────────────────────────────────────────────────
+  // --- Stripe ---
   stripeCustomerId     String?  @unique
   stripeSubscriptionId String?
   stripePriceId        String?
@@ -1568,4 +1572,32 @@ model SupportChatMessage {
   userId    String
   message   String
   createdAt DateTime @default(now())
+}
+
+model LicenseKey {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  plan        String    @default("PRO")
+  maxUsers    Int       @default(10)
+  maxAssets   Int       @default(100)
+  durationDays Int      @default(365)
+  expiresAt   DateTime?
+  status      String    @default("AVAILABLE")
+  usedByTenantId String?
+  usedByTenant   Tenant? @relation("TenantLicenses", fields: [usedByTenantId], references: [id])
+  usedAt      DateTime?
+  usedByEmail String?
+  usedByName  String?
+  generatedBy String?
+  generatedAt DateTime  @default(now())
+  notes       String?
+  revokedAt   DateTime?
+  revokedBy   String?
+  revokedReason String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([plan, status])
+  @@index([key])
 }

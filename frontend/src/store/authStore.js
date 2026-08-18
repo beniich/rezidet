@@ -21,20 +21,7 @@ export const useAuthStore = create(
         }
       },
 
-      mockLogin: () => {
-        set({
-          user: {
-            id: 'mock-123',
-            email: 'admin@cafm.com',
-            firstName: 'Admin (Mock)',
-            lastName: 'CAFM',
-            role: 'ADMIN'
-          },
-          token: 'mock-jwt-token',
-          loading: false
-        });
-      },
-      
+
       logout: () => set({ user: null, token: null })
     }),
     { name: 'cafm-auth' }

@@ -2,72 +2,125 @@ version: '3.8'
 
 services:
   # ============== BASE DE DONNÉES ==============
-  postgres:
+  db:
     image: postgres:16-alpine
-    container_name: cafm-postgres
+    container_name: rezidet-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: cafm_user
-      POSTGRES_PASSWORD: cafm_password
-      POSTGRES_DB: cafm_db
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-rezidet_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGEZ_MOI}
+      POSTGRES_DB: ${POSTGRES_DB:-rezidet_prod}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - rezidet-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cafm_user -d cafm_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rezidet_user}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============== BACKEND API ==============
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: rezidet-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env.production
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rezidet_user}:${POSTGRES_PASSWORD:-CHANGEZ_MOI}@db:5432/${POSTGRES_DB:-rezidet_prod}
+    volumes:
+      - /etc/secrets:/etc/secrets:ro
+      - api_uploads:/app/uploads
+    expose:
+      - "8081"
+    networks:
+      - rezidet-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8081/api/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); })"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============== FRONTEND (Nginx) ==============
+  ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+        - VITE_WS_URL=
+        - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+        - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+        - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+        - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
+        - VITE_VAPID_PUBLIC_KEY=${VITE_VAPID_PUBLIC_KEY}
+        - VITE_APP_NAME=Rezidet
+        - VITE_ENV=production
+    container_name: rezidet-ui
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ui_logs:/var/log/nginx
+    networks:
+      - rezidet-net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
   # ============== REDIS (cache) ==============
   redis:
     image: redis:7-alpine
-    container_name: cafm-redis
+    container_name: rezidet-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    expose:
+      - "6379"
+    networks:
+      - rezidet-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 3s
       retries: 3
 
-  # ============== BACKEND API ==============
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: cafm-backend
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 5000
-      DATABASE_URL: postgresql://cafm_user:cafm_password@postgres:5432/cafm_db
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-prod}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
-      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
-    ports:
-      - "5000:5000"
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
 volumes:
   postgres_data:
+  api_uploads:
   redis_data:
+  ui_logs:
+
+networks:
+  rezidet-net:
+    driver: bridge

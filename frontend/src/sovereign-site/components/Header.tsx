@@ -312,22 +312,22 @@ export const Header: React.FC<HeaderProps> = ({
               ))}
             </div>
 
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex flex-col sm:flex-row items-center gap-2 w-full mt-4 sm:mt-0">
               <button
                 onClick={() => {
                   window.location.href = '/login';
                 }}
-                className="flex-1 py-2 rounded-xl glass-card text-xs font-bold text-center text-white"
+                className="w-full sm:flex-1 py-3 sm:py-2 rounded-xl glass-card text-xs font-bold text-center text-white hover:bg-white/10 transition-colors"
               >
-                Login
+                {language === 'FR' ? 'CONNEXION' : language === 'ES' ? 'CONEXIÓN' : 'LOGIN'}
               </button>
               <button
                 onClick={() => {
                   window.location.href = '/auth/register';
                 }}
-                className="flex-1 py-2 rounded-xl btn-gradient-orange text-xs font-bold text-center text-white glow-orange"
+                className="w-full sm:flex-1 py-3 sm:py-2 rounded-xl btn-gradient-orange text-xs font-bold text-center text-white glow-orange hover:scale-[1.02] active:scale-[0.98] transition-transform"
               >
-                Démarrer
+                {language === 'FR' ? 'DÉMARRER' : language === 'ES' ? 'EMPEZAR' : 'GET STARTED'}
               </button>
             </div>
           </div>

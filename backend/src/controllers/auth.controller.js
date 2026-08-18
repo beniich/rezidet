@@ -94,8 +94,8 @@ exports.googleLogin = async (req, res) => {
         finalRole = 'SUPERADMIN';
       } else {
         if (!licenseKey) return res.status(400).json({ error: 'Clé de licence requise pour les nouveaux comptes' });
-        license = await prisma.licenseKey.findUnique({ where: { key: licenseKey } });
-        if (!license || license.isUsed || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
+        license = await prisma.licenseKey.findUnique({ where: { key: licenseKey.toUpperCase() } });
+        if (!license || license.status !== 'AVAILABLE' || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
           return res.status(400).json({ error: 'Clé de licence invalide, déjà utilisée ou expirée' });
         }
       }
@@ -123,7 +123,13 @@ exports.googleLogin = async (req, res) => {
       if (license) {
         await prisma.licenseKey.update({
           where: { id: license.id },
-          data: { isUsed: true, usedBy: user.tenantId }
+          data: { 
+            status: 'USED', 
+            usedByTenantId: user.tenantId,
+            usedByEmail: user.email,
+            usedByName: `${user.firstName} ${user.lastName}`,
+            usedAt: new Date()
+          }
         });
       }
     }
@@ -163,8 +169,8 @@ exports.register = async (req, res) => {
       finalRole = 'SUPERADMIN';
     } else {
       if (!licenseKey) return res.status(400).json({ error: 'Clé de licence requise' });
-      license = await prisma.licenseKey.findUnique({ where: { key: licenseKey } });
-      if (!license || license.isUsed || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
+      license = await prisma.licenseKey.findUnique({ where: { key: licenseKey.toUpperCase() } });
+      if (!license || license.status !== 'AVAILABLE' || (license.expiresAt && new Date(license.expiresAt) < new Date())) {
         return res.status(400).json({ error: 'Clé de licence invalide, déjà utilisée ou expirée' });
       }
     }
@@ -192,7 +198,13 @@ exports.register = async (req, res) => {
     if (license) {
       await prisma.licenseKey.update({
         where: { id: license.id },
-        data: { isUsed: true, usedBy: user.tenantId }
+        data: { 
+          status: 'USED', 
+          usedByTenantId: user.tenantId,
+          usedByEmail: user.email,
+          usedByName: `${user.firstName} ${user.lastName}`,
+          usedAt: new Date()
+        }
       });
     }
 

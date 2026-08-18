@@ -1,22 +1,20 @@
 {
-  "name": "cafm-backend",
+  "name": "rezidet-backend",
   "version": "2.1.0",
   "description": "API REST pour la plateforme CAFM Pro",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy",
+    "start:prod": "NODE_ENV=production node src/server.js",
+    "build": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset",
     "seed": "node prisma/seed.js",
-    "test": "jest --runInBand",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:load": "k6 run performance/k6-load-test.js",
-    "test:stress": "k6 run performance/k6-stress-test.js",
     "lint": "eslint src/",
-    "format": "prettier --write src/"
+    "test": "jest --runInBand",
+    "test:ci": "jest --ci --coverage"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",

@@ -36,6 +36,9 @@ const initFirebaseAdmin = () => {
   }
 
   // Mode 3 : dev sans credentials (vérification simulée)
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('❌ En production, les identifiants Firebase Admin sont obligatoires (GOOGLE_APPLICATION_CREDENTIALS ou vars individuelles).');
+  }
   console.warn('⚠️ Firebase Admin: no credentials found — mock mode (dev only)');
   return null;
 };
