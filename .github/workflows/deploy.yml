@@ -48,6 +48,7 @@ jobs:
       - name: Setup database
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/rezidet_test
+          DATABASE_URL_UNPOOLED: postgresql://test:test@localhost:5432/rezidet_test
         run: |
           cd backend
           npx prisma generate
@@ -57,6 +58,7 @@ jobs:
       - name: Test backend
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/rezidet_test
+          DATABASE_URL_UNPOOLED: postgresql://test:test@localhost:5432/rezidet_test
           JWT_SECRET: test-secret-key-for-ci-only
         run: cd backend && npm test
 
