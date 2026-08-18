@@ -2,6 +2,7 @@ import React from 'react';
 import { PageId, Language, BrandVariant } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import { ShieldCheck, Activity } from 'lucide-react';
+import RezidetLogo from '../../../components/RezidetLogo';
 
 interface FooterProps {
   onNavigate: (page: PageId) => void;
@@ -79,10 +80,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, language: propLang, 
         {/* Brand Column */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 btn-gradient-orange rounded-lg flex items-center justify-center text-white glow-orange-sm">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <span className="text-lg font-bold text-white tracking-wider">{brand}</span>
+            <RezidetLogo className="h-8" textClassName="text-xl" />
           </div>
           <p className="text-xs text-gray-400 leading-relaxed font-light">
             {descriptions[language]}

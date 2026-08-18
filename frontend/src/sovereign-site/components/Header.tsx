@@ -16,7 +16,11 @@ import {
   Palette,
   ChevronDown,
   UserCheck,
+  Activity,
+  Cpu,
+  MonitorSmartphone,
 } from 'lucide-react';
+import RezidetLogo from '../../../components/RezidetLogo';
 
 interface HeaderProps {
   activePage: PageId;
@@ -84,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({
     },
   ];
 
-  const brandOptions: BrandVariant[] = ['CAFM Pro', 'Sovereign Device Nexus', 'ReclamTrack Pro'];
+  const brandOptions: BrandVariant[] = ['REZIDET', 'REZIDET', 'REZIDET'];
 
   const themeOptions: { id: BackgroundTheme; name: string }[] = [
     { id: 'circuit', name: 'Circuit PCB' },
@@ -99,35 +103,14 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-50 w-full px-4 sm:px-6 py-3 transition-all">
       <div className="max-w-7xl mx-auto glass-header rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between shadow-2xl border border-white/10">
         
-        {/* Brand Selector Logo */}
+        {/* Brand Logo */}
         <div className="relative">
           <button
-            onClick={() => setBrandDropdownOpen(!brandDropdownOpen)}
+            onClick={() => onNavigate('home')}
             className="flex items-center gap-2 group cursor-pointer focus:outline-none"
-            title="Click to switch Brand Theme"
+            title="Home"
           >
-            <div className="w-9 h-9 rounded-xl btn-gradient-orange flex items-center justify-center text-white glow-orange-sm group-hover:scale-105 transition-transform">
-              {brand === 'CAFM Pro' && <Layers className="w-5 h-5" />}
-              {brand === 'Sovereign Device Nexus' && <Shield className="w-5 h-5" />}
-              {brand === 'ReclamTrack Pro' && <Sparkles className="w-5 h-5" />}
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-1">
-                <span className="text-lg font-bold tracking-tight text-white group-hover:text-orange-400 transition-colors">
-                  {brand === 'ReclamTrack Pro' ? (
-                    <>
-                      RECLAMTRACK <span className="text-orange-500">PRO</span>
-                    </>
-                  ) : (
-                    brand
-                  )}
-                </span>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:text-white" />
-              </div>
-              <span className="text-[10px] uppercase tracking-wider text-orange-400/80 font-mono block -mt-1">
-                Cyber-Sovereign Platform
-              </span>
-            </div>
+            <RezidetLogo className="h-10" textClassName="text-2xl" />
           </button>
 
           {/* Brand Switcher Dropdown */}

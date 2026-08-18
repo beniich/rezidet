@@ -6,13 +6,14 @@ import {
   Bell, Globe, Download, Database, Layers, Menu, X,
   FileText, Cpu, Sun, Moon, Settings, CreditCard, ShoppingBag, Store,
   Coins, Vote, Rocket, Activity, Zap, TrendingUp, Target, Key,
-  RefreshCw, Eye
+  RefreshCw, Eye, ShieldAlert
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 import { useTenantStore } from '../store/tenantStore';
 import clsx from 'clsx';
 import { PresencePanel, StatusDot } from './PresencePanel';
+import RezidetLogo from './RezidetLogo';
 
 // ─── Navigation data ───────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
@@ -48,7 +49,7 @@ const NAV_SECTIONS = [
   {
     title: 'WEB3 & DEFI',
     items: [
-      { to: '/dashboard/staking',    icon: Coins,     label: 'Staking CAFM' },
+      { to: '/dashboard/staking',    icon: Coins,     label: 'Staking REZIDET' },
       { to: '/dashboard/dao',        icon: Vote,      label: 'Gouvernance DAO' },
       { to: '/dashboard/launchpad',  icon: Rocket,    label: 'IDO Launchpad' },
       { to: '/dashboard/bridge',     icon: Zap,       label: 'Cross-Chain Bridge' },
@@ -79,19 +80,8 @@ function Sidebar({ orgName, orgLogo, user, isDark, toggleTheme, onLogout, onPres
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="p-5 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-3">
-          {orgLogo ? (
-            <img src={orgLogo} alt={orgName} className="w-10 h-10 rounded-xl object-cover border border-white/10" />
-          ) : (
-            <div className="w-10 h-10 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center glow-orange-sm">
-              <Building2 className="w-5 h-5 text-orange-400" />
-            </div>
-          )}
-          <div>
-            <div className="font-extrabold text-xs tracking-wider uppercase text-zinc-100">{orgName}</div>
-            <div className="text-[10px] font-bold text-orange-400 tracking-widest uppercase">FACILITY MANAGEMENT</div>
-          </div>
-        </div>
+        <RezidetLogo className="h-10" textClassName="text-2xl" />
+        <div className="text-[10px] mt-1 font-bold text-orange-400 tracking-widest uppercase ml-12">FACILITY MANAGEMENT</div>
       </div>
 
       {/* Nav */}
@@ -187,7 +177,7 @@ const PAGE_TITLES = {
   '/dashboard/billing': 'FACTURATION',
   '/dashboard/marketplace': 'MARKETPLACE',
   '/dashboard/vendor': 'VENDOR DASHBOARD',
-  '/dashboard/staking': 'STAKING CAFM',
+  '/dashboard/staking': 'STAKING REZIDET',
   '/dashboard/dao': 'GOUVERNANCE DAO',
   '/dashboard/launchpad': 'IDO LAUNCHPAD',
   '/dashboard/bridge': 'CROSS-CHAIN BRIDGE',
@@ -220,7 +210,7 @@ export default function Layout() {
   const handleLogout = () => { logout(); navigate('/login'); };
   const closeSidebar = () => setSidebarOpen(false);
 
-  const orgName = tenant?.name || 'CAFM Pro';
+  const orgName = tenant?.name || 'REZIDET';
   const orgLogo = tenant?.logo || null;
   const pageTitle = PAGE_TITLES[location.pathname] || location.pathname.split('/').pop()?.toUpperCase();
 
