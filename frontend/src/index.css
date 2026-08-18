@@ -27,6 +27,7 @@
   }
   body {
     @apply antialiased text-zinc-200;
+    background-color: #090218; /* fallback dur avant CSS vars */
     background-color: var(--color-background);
     color: var(--color-zinc-200);
     font-family: 'Inter', sans-serif;
