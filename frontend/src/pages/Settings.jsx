@@ -9,7 +9,7 @@ export default function Settings() {
 <img alt="Organization Logo" class="w-8 h-8 rounded" data-alt="A sleek, minimalist vector logo for an enterprise software company, featuring sharp geometric lines in a metallic blue and silver color palette. The logo is displayed on a dark slate background, conveying precision, reliability, and modern technology in a corporate setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1FPmqDrE0Yc149imahI5PofSc9Dkn8YeO4b7Mm77rhKeoLbvM0tFq_STS0CkuSSOsXQyfYh19RfZKglISDpPHRC3KFEBEMPa7Y5i0ypx8Rt6v4-wRqXgsCeST8hgdQGaRNZMBs8ruvj2QRIFnNo7_WcKf_1REHSma9Oie8Y8vsAcyENl_lGyghOCG7MXaErNg066aHoEeaJp8AT4hKjWiQfR1Otwg-RnnzKMhX5DCUWRA3qAIHh2k"/>
 <div>
 <h1 class="text-headline-sm font-headline-sm font-bold text-primary">Obsidian Metric</h1>
-<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise CAFM</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise REZIDET</p>
 </div>
 </div>
 <ul class="flex flex-col flex-grow py-4 gap-1 overflow-y-auto scrollbar-hide px-2">

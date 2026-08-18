@@ -221,7 +221,7 @@ export const PricingPage: React.FC<PricingPageProps> = ({ onNavigate, language: 
               <div className="p-6 text-center space-y-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl">
                 <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
                 <p className="text-base font-bold text-white">{subscribedMessage}</p>
-                <p className="text-xs text-gray-300">Setting up your Sovereign Device Nexus dashboard...</p>
+                <p className="text-xs text-gray-300">Setting up your REZIDET dashboard...</p>
               </div>
             ) : (
               <form onSubmit={confirmSubscription} className="space-y-4">

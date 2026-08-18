@@ -53,7 +53,7 @@ export default function Analytics() {
           { icon: Zap, label: 'Énergie consommée', value: '98.5 MWh', sub: 'Ce mois', color: 'yellow' },
           { icon: Leaf, label: 'CO₂ évité', value: '12.4t', sub: 'vs 2023', color: 'green' },
           { icon: DollarSign, label: 'Économies', value: '€18.2k', sub: '+23% YoY', color: 'blue' },
-          { icon: TrendingUp, label: 'ROI CAFM', value: '312%', sub: 'Sur 3 ans', color: 'purple' }
+          { icon: TrendingUp, label: 'ROI REZIDET', value: '312%', sub: 'Sur 3 ans', color: 'purple' }
         ].map((s, i) => (
           <div key={i} className="bg-white rounded-xl p-5 border border-slate-200">
             <div className={`w-10 h-10 bg-${s.color}-100 rounded-lg flex items-center justify-center mb-3`}>

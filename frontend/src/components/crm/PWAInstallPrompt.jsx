@@ -27,7 +27,7 @@ export default function PWAInstallPrompt() {
           <Download className="w-5 h-5 text-indigo-400" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-sm text-white">Installer CAFM Dashboard</h3>
+          <h3 className="font-semibold text-sm text-white">Installer REZIDET Dashboard</h3>
           <p className="text-xs text-zinc-400 mt-1">
             Accédez rapidement à vos données depuis votre écran d'accueil
           </p>

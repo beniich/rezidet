@@ -32,7 +32,7 @@ describe('Auth Controller', () => {
         lastName: 'Test',
         role: 'ADMIN',
         isActive: true,
-        organization: { id: 'org-1', name: 'CAFM Inc' },
+        organization: { id: 'org-1', name: 'REZIDET Inc' },
       };
 
       prisma.user.findUnique.mockResolvedValue(user);
@@ -159,7 +159,7 @@ describe('Auth Controller', () => {
         firstName: 'Admin',
         lastName: 'Test',
         role: 'ADMIN',
-        organization: { id: 'org-1', name: 'CAFM Inc' },
+        organization: { id: 'org-1', name: 'REZIDET Inc' },
       };
       prisma.user.findUnique.mockResolvedValue(user);
 

@@ -68,7 +68,7 @@ export default function CRMLayout() {
         <div className="h-16 flex items-center justify-between px-6 border-b border-zinc-800">
           <div className="flex items-center">
             <Activity className="text-indigo-500 mr-3" size={24} />
-            <span className="font-bold text-lg text-white tracking-wide">CAFM <span className="font-light">CRM</span></span>
+            <span className="font-bold text-lg text-white tracking-wide">REZIDET <span className="font-light">CRM</span></span>
           </div>
           {isMobile && (
             <button onClick={() => setSidebarOpen(false)} className="text-zinc-400 hover:text-white">
@@ -146,7 +146,7 @@ export default function CRMLayout() {
             <button onClick={() => setSidebarOpen(true)} className="text-zinc-400 hover:text-white">
               <Menu size={24} />
             </button>
-            <h2 className="font-semibold text-white tracking-wide">CAFM CRM</h2>
+            <h2 className="font-semibold text-white tracking-wide">REZIDET CRM</h2>
             <button className="relative text-zinc-400 hover:text-white">
               <Bell size={24} />
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#18181b]"></span>

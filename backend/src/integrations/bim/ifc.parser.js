@@ -1,5 +1,5 @@
 /**
- * Parser de maquettes IFC (Mock parser intelligent pour la démonstration CAFM)
+ * Parser de maquettes IFC (Mock parser intelligent pour la démonstration REZIDET)
  * Analyse l'IFC et extrait les composants hierarchiques (IfcSite ➔ IfcBuilding ➔ IfcBuildingStorey ➔ IfcProduct)
  */
 class IFCParser {

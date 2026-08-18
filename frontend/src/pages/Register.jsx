@@ -77,7 +77,7 @@ export default function Register() {
             <Building2 className="w-8 h-8 text-orange-400" />
           </div>
           <h2 className="text-3xl font-display font-bold tracking-widest uppercase text-glow-orange">
-            Rejoindre CAFM
+            Rejoindre REZIDET
           </h2>
           <p className="text-orange-400/80 mt-2 text-xs font-mono tracking-widest uppercase">
             Créer votre organisation Sovereign

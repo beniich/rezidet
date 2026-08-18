@@ -44,13 +44,13 @@ export default function Staking() {
       <div className="flex items-center gap-3 mb-6">
         <Coins className="w-8 h-8 text-yellow-500" />
         <div>
-          <h1 className="text-2xl font-bold">Staking CAFM Token</h1>
+          <h1 className="text-2xl font-bold">Staking REZIDET Token</h1>
           <p className="text-slate-500">Gagnez jusqu'à 5% APY en stakant vos tokens</p>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <KPICard icon={Wallet} label="Total staké" value={`${stats.totalStaked} CAFM`} color="yellow" />
+        <KPICard icon={Wallet} label="Total staké" value={`${stats.totalStaked} REZIDET`} color="yellow" />
         <KPICard icon={TrendingUp} label="APY actuel" value={`${stats.currentAPY}%`} color="green" />
         <KPICard icon={Award} label="Boost NFT" value="+0.5%" color="purple" />
         <KPICard icon={Users} label="Stakers" value={stats.totalStakers} color="blue" />
@@ -60,7 +60,7 @@ export default function Staking() {
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
           <h2 className="font-bold mb-4">Stake</h2>
           <div className="mb-4">
-            <label className="text-sm font-medium mb-1 block">Montant (CAFM)</label>
+            <label className="text-sm font-medium mb-1 block">Montant (REZIDET)</label>
             <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="1000" className="w-full px-4 py-3 border border-[var(--color-border)] bg-[var(--color-bg)] rounded-lg text-lg" />
           </div>
           <div className="mb-4">
@@ -80,7 +80,7 @@ export default function Staking() {
           {position && parseFloat(position.stakedAmount) > 0 && (
             <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
               <h3 className="font-medium mb-2">Ma position</h3>
-              <p className="text-2xl font-bold">{position.stakedAmount} CAFM</p>
+              <p className="text-2xl font-bold">{position.stakedAmount} REZIDET</p>
               <p className="text-sm text-green-600">+{position.pendingRewards} rewards en attente</p>
               <button className="mt-3 w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">Réclamer les rewards</button>
             </div>
@@ -99,7 +99,7 @@ export default function Staking() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">{h.amount} CAFM</p>
+                  <p className="font-medium">{h.amount} REZIDET</p>
                 </div>
               </div>
             ))}

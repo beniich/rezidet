@@ -33,7 +33,7 @@ export default function DashboardExecutive() {
 <div class="px-6 mb-8 flex items-center gap-3">
 <img alt="Executive User Avatar" class="w-8 h-8 rounded" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDadH5InoHniIT_63pj3uQ2ONxZ87m4sgwV6iZzUyt-_qTgK09ZkBiEqCPu4c10FWY_HDCtEKaFuFJbdSNZfgIuqnrmTNNjGMEyECJdgWqifvQUlGEcXJDjJYWKET6DlpWm_mEn3UpPywPN50aA_SW52VVZRE9t6dVAQ45fc0wKmpziUveJuayyDWjFXk61F55JpX9wpPr4l0UgGLhZwpVtJNXmI2F01mnGRjc9aLao4LLM3EIv3RfZ"/>
 <div>
-<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary leading-tight">CAFM Pro</h2>
+<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary leading-tight">REZIDET</h2>
 <p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise SRE</p>
 </div>
 </div>

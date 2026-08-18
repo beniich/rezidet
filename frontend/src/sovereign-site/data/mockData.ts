@@ -153,10 +153,10 @@ export const FAQ_ITEMS: FAQItem[] = [
       ES: "¿Cómo me programo las tareas de mantenimiento preventivo?",
     },
     answer: {
-      FR: "CAFM Pro utilise des algorithmes prédictifs pour analyser le comportement des équipements en temps réel. Vous pouvez définir des règles automatisées déclenchant des ordres de travail dès qu'une anomalie thermique ou de vibration est détectée.",
-      EN: "CAFM Pro leverages predictive AI models that continuously monitor device telemetry. Automated work orders can be generated automatically when thermal or vibration anomalies breach baseline safety thresholds.",
-      DE: "CAFM Pro nutzt prädiktive KI-Modelle zur Telemetrieüberwachung. Automatische Arbeitsaufträge werden erstellt, wenn Schwellenwerte überschritten werden.",
-      ES: "CAFM Pro utiliza inteligencia artificial predictiva. Se pueden generar órdenes de trabajo automáticas cuando las telemetrías superan los límites.",
+      FR: "REZIDET utilise des algorithmes prédictifs pour analyser le comportement des équipements en temps réel. Vous pouvez définir des règles automatisées déclenchant des ordres de travail dès qu'une anomalie thermique ou de vibration est détectée.",
+      EN: "REZIDET leverages predictive AI models that continuously monitor device telemetry. Automated work orders can be generated automatically when thermal or vibration anomalies breach baseline safety thresholds.",
+      DE: "REZIDET nutzt prädiktive KI-Modelle zur Telemetrieüberwachung. Automatische Arbeitsaufträge werden erstellt, wenn Schwellenwerte überschritten werden.",
+      ES: "REZIDET utiliza inteligencia artificial predictiva. Se pueden generar órdenes de trabajo automáticas cuando las telemetrías superan los límites.",
     },
   },
   {
@@ -179,10 +179,10 @@ export const FAQ_ITEMS: FAQItem[] = [
     id: 'faq-3',
     category: 'security',
     question: {
-      FR: "Est-ce que CAFM Pro est conforme au RGPD et ISO 27001 ?",
-      EN: "Is CAFM Pro compliant with GDPR and ISO 27001?",
-      DE: "Ist CAFM Pro DSGVO- und ISO 27001-konform?",
-      ES: "¿CAFM Pro cumple con GDPR e ISO 27001?",
+      FR: "Est-ce que REZIDET est conforme au RGPD et ISO 27001 ?",
+      EN: "Is REZIDET compliant with GDPR and ISO 27001?",
+      DE: "Ist REZIDET DSGVO- und ISO 27001-konform?",
+      ES: "¿REZIDET cumple con GDPR e ISO 27001?",
     },
     answer: {
       FR: "Absolument. Nous appliquons un chiffrement de bout en bout (AES-256), un hébergement certifié ISO 27001, SOC 2 Type II et respectons scrupuleusement la souveraineté des données européennes.",
@@ -196,15 +196,15 @@ export const FAQ_ITEMS: FAQItem[] = [
     category: 'general',
     question: {
       FR: "La solution fonctionne-t-elle à 100% dans le cloud ou en hybride ?",
-      EN: "Is CAFM Pro completely cloud-based or hybrid?",
-      DE: "Ist CAFM Pro vollständig cloudbasiert oder hybrid?",
-      ES: "¿CAFM Pro es 100% basado en la nube o híbrido?",
+      EN: "Is REZIDET completely cloud-based or hybrid?",
+      DE: "Ist REZIDET vollständig cloudbasiert oder hybrid?",
+      ES: "¿REZIDET es 100% basado en la nube o híbrido?",
     },
     answer: {
-      FR: "CAFM Pro offre une flexibilité totale : déploiement SaaS Cloud Souverain, Hybride ou 100% On-Premise isolé pour les infrastructures critiques.",
-      EN: "CAFM Pro offers complete deployment flexibility: Sovereign Cloud SaaS, Hybrid Edge Sync, or 100% On-Premise Air-Gapped installations for mission-critical facilities.",
-      DE: "CAFM Pro bietet volle Flexibilität: Cloud-SaaS, Hybrid Edge oder 100% On-Premise.",
-      ES: "CAFM Pro ofrece máxima flexibilidad: SaaS en la nube, Edge híbrido o instalación 100% local.",
+      FR: "REZIDET offre une flexibilité totale : déploiement SaaS Cloud Souverain, Hybride ou 100% On-Premise isolé pour les infrastructures critiques.",
+      EN: "REZIDET offers complete deployment flexibility: Sovereign Cloud SaaS, Hybrid Edge Sync, or 100% On-Premise Air-Gapped installations for mission-critical facilities.",
+      DE: "REZIDET bietet volle Flexibilität: Cloud-SaaS, Hybrid Edge oder 100% On-Premise.",
+      ES: "REZIDET ofrece máxima flexibilidad: SaaS en la nube, Edge híbrido o instalación 100% local.",
     },
   },
   {
@@ -348,7 +348,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 'test-1',
     quote:
-      'CAFM Pro transformed our facility management operations, saving significant costs and improving efficiency across 140 commercial buildings.',
+      'REZIDET transformed our facility management operations, saving significant costs and improving efficiency across 140 commercial buildings.',
     author: 'Sarah Jenkins',
     role: 'COO',
     company: 'Apex Corp',
@@ -368,7 +368,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     id: 'test-3',
     quote:
-      'Implementing CAFM Pro was seamless. Their support is outstanding, and the sovereign security platform scales perfectly with our security requirements.',
+      'Implementing REZIDET was seamless. Their support is outstanding, and the sovereign security platform scales perfectly with our security requirements.',
     author: 'Maria Garcia',
     role: 'Head of Operations',
     company: 'Metro Facilities',

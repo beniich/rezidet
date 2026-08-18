@@ -300,7 +300,7 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({ onNavigate, langua
     setConfirmModal({
       isOpen: true,
       title: 'Create Google Sheet in Google Drive?',
-      description: 'This will create a new Google Spreadsheet titled "CAFM Pro - Asset Telemetry & Facility Log" in your Google Drive and write initial facility log headers.',
+      description: 'This will create a new Google Spreadsheet titled "REZIDET - Asset Telemetry & Facility Log" in your Google Drive and write initial facility log headers.',
       onConfirm: async () => {
         try {
           setLoadingSheets(true);
@@ -372,13 +372,13 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({ onNavigate, langua
     setConfirmModal({
       isOpen: true,
       title: 'Export Asset Inventory to Google Sheets?',
-      description: `This will create a new Google Spreadsheet titled "CAFM Pro - Asset Inventory Export (${new Date().toLocaleDateString()})" in your Google Drive with ${assetInventory.length} registered assets.`,
+      description: `This will create a new Google Spreadsheet titled "REZIDET - Asset Inventory Export (${new Date().toLocaleDateString()})" in your Google Drive with ${assetInventory.length} registered assets.`,
       onConfirm: async () => {
         try {
           setLoadingSheets(true);
           const newSheet = await exportAssetInventoryToSheets(
             token,
-            `CAFM Pro - Asset Inventory (${new Date().toISOString().slice(0, 10)})`,
+            `REZIDET - Asset Inventory (${new Date().toISOString().slice(0, 10)})`,
             assetInventory
           );
           setSheetData(newSheet);
@@ -402,13 +402,13 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({ onNavigate, langua
     setConfirmModal({
       isOpen: true,
       title: 'Export Maintenance Schedule to Google Sheets?',
-      description: `This will create a new Google Spreadsheet titled "CAFM Pro - Maintenance Schedule Export (${new Date().toLocaleDateString()})" in your Google Drive with ${maintenanceSchedule.length} work orders.`,
+      description: `This will create a new Google Spreadsheet titled "REZIDET - Maintenance Schedule Export (${new Date().toLocaleDateString()})" in your Google Drive with ${maintenanceSchedule.length} work orders.`,
       onConfirm: async () => {
         try {
           setLoadingSheets(true);
           const newSheet = await exportMaintenanceScheduleToSheets(
             token,
-            `CAFM Pro - Maintenance Schedule (${new Date().toISOString().slice(0, 10)})`,
+            `REZIDET - Maintenance Schedule (${new Date().toISOString().slice(0, 10)})`,
             maintenanceSchedule
           );
           setSheetData(newSheet);

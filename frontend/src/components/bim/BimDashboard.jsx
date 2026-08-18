@@ -28,7 +28,7 @@ export default function BimDashboard({ elements = [] }) {
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-300 font-mono">
-        <p className="text-[10px] text-slate-500 uppercase">Éléments associés au CAFM</p>
+        <p className="text-[10px] text-slate-500 uppercase">Éléments associés au REZIDET</p>
         <p className="text-2xl font-bold text-emerald-400 mt-1 flex items-center gap-1.5">
           <Link className="w-5 h-5" /> {linked} ({linkedPercent}%)
         </p>

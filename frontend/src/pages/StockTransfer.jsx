@@ -6,8 +6,8 @@ export default function StockTransfer() {
 <!-- TopNavBar Shell (Assets Active implicitly by context) -->
 <header class="bg-surface dark:bg-surface h-header-height w-full top-0 sticky border-b border-border-muted flex justify-between items-center px-margin-page md:ml-sidebar-width z-50">
 <div class="flex items-center gap-6">
-<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface hidden md:block">CAFM Pro</h1>
-<h1 class="font-headline-sm text-headline-sm font-bold text-primary-fixed md:hidden">CAFM Pro Intervention</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface hidden md:block">REZIDET</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary-fixed md:hidden">REZIDET Intervention</h1>
 <nav class="hidden md:flex gap-6">
 <a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all py-5 border-b-2 border-transparent" href="#">Main Campus</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-all py-5 border-b-2 border-transparent" href="#">Research Wing</a>
@@ -35,7 +35,7 @@ export default function StockTransfer() {
 <div class="font-body-sm text-body-sm text-on-surface-variant">Field Ops Team A</div>
 </div>
 </div>
-<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">CAFM Pro v4.2</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">REZIDET v4.2</div>
 </div>
 <div class="flex flex-col flex-1 px-4 gap-2">
 <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant transition-colors rounded-lg" href="/">

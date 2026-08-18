@@ -116,7 +116,7 @@ export default function Dashboard() {
       {/* ── Quick Actions ── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs font-bold uppercase tracking-wider text-orange-400 glow-text">
-          REZIDET CAFM v4.0 • VUE D'ENSEMBLE EXÉCUTIVE
+          REZIDET REZIDET v4.0 • VUE D'ENSEMBLE EXÉCUTIVE
         </span>
         <div className="flex items-center gap-3">
           <button

@@ -6,7 +6,7 @@ export default function OperationalPipeline() {
 <!-- SideNavBar -->
 <nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-low border-r border-border-muted w-sidebar-width shrink-0">
 <div class="h-header-height flex items-center px-container-padding">
-<span class="font-headline-md text-headline-md font-bold text-primary">CAFM Pro</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">REZIDET</span>
 <span class="ml-2 font-label-sm text-label-sm text-on-surface-variant">Enterprise SRE</span>
 </div>
 <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
@@ -55,7 +55,7 @@ export default function OperationalPipeline() {
 <!-- TopNavBar -->
 <header class="fixed top-0 right-0 left-64 flex justify-between items-center px-container-padding z-50 bg-surface/80 backdrop-blur-md border-b border-border-muted shadow-sm h-header-height">
 <div class="flex items-center gap-6">
-<h1 class="font-headline-sm text-headline-sm font-black text-on-surface">CAFM Pro</h1>
+<h1 class="font-headline-sm text-headline-sm font-black text-on-surface">REZIDET</h1>
 <nav class="hidden md:flex gap-4">
 <a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 opacity-80 transition-opacity" href="#">Building Alpha</a>
 <a class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-variant/20 px-2 py-1 rounded" href="#">Building Beta</a>

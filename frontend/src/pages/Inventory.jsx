@@ -6,7 +6,7 @@ export default function Inventory() {
 <!-- TopNavBar -->
 <header class="fixed top-0 w-full h-header-height z-50 flex items-center justify-between px-margin-page bg-surface border-b border-border-muted transition-colors duration-200">
 <div class="flex items-center gap-8 h-full">
-<div class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Obsidian Metric CAFM</div>
+<div class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Obsidian Metric REZIDET</div>
 <!-- Top Nav Links (Hidden on mobile) -->
 <nav class="hidden md:flex items-center h-full gap-6 ml-4">
 <a class="h-full flex flex-col justify-center text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="/">

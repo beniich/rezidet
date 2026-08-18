@@ -6,7 +6,7 @@ import { WorkspaceCalendarEvent, WorkspaceContact, WorkspaceSheetData } from '..
 
 export async function createFacilityLogSpreadsheet(
   accessToken: string,
-  title: string = 'CAFM Pro - Asset Telemetry & Facility Log'
+  title: string = 'REZIDET - Asset Telemetry & Facility Log'
 ): Promise<WorkspaceSheetData> {
   const url = 'https://sheets.googleapis.com/v4/spreadsheets';
   
@@ -106,7 +106,7 @@ export async function appendRowToSpreadsheet(
 
 export async function exportAssetInventoryToSheets(
   accessToken: string,
-  title: string = 'CAFM Pro - Asset Inventory Export',
+  title: string = 'REZIDET - Asset Inventory Export',
   assetsData: Array<{
     id: string;
     name: string;
@@ -165,7 +165,7 @@ export async function exportAssetInventoryToSheets(
 
 export async function exportMaintenanceScheduleToSheets(
   accessToken: string,
-  title: string = 'CAFM Pro - Maintenance Schedule Export',
+  title: string = 'REZIDET - Maintenance Schedule Export',
   scheduleData: Array<{
     workOrderId: string;
     assetName: string;
@@ -262,7 +262,7 @@ export async function createCalendarEvent(
     },
     body: JSON.stringify({
       summary: event.summary,
-      description: event.description || 'Scheduled via CAFM Pro Sovereign Facility Hub',
+      description: event.description || 'Scheduled via REZIDET Sovereign Facility Hub',
       location: event.location || 'Data Center Alpha - Main Switchboard',
       start: event.start,
       end: event.end,

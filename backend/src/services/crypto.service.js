@@ -13,8 +13,8 @@ class CryptoService {
   async createCharge({ amount, currency, tenantId, description, metadata = {} }) {
     if (!process.env.COINBASE_COMMERCE_API_KEY) throw new Error('Coinbase Commerce API key missing');
     const chargeData = {
-      name: `CAFM Pro - ${description || 'Paiement'}`,
-      description: description || 'Recharge de crédits CAFM Pro',
+      name: `REZIDET - ${description || 'Paiement'}`,
+      description: description || 'Recharge de crédits REZIDET',
       local_price: { amount: amount.toFixed(2), currency: currency.toUpperCase() },
       pricing_type: 'fixed_price',
       metadata: { tenantId, ...metadata },

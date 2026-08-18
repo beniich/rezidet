@@ -10,7 +10,7 @@ const router = express.Router();
  */
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(swaggerSpec, {
-  customSiteTitle: 'CAFM Pro API Documentation',
+  customSiteTitle: 'REZIDET API Documentation',
   customCss: `
     .swagger-ui .topbar { background-color: #4f46e5; }
     .swagger-ui .topbar .download-url-wrapper .select-label select { 
@@ -44,7 +44,7 @@ router.get('/api-spec.json', (req, res) => {
 router.get('/api-spec.yaml', (req, res) => {
   // Conversion simple JSON -> YAML (basique)
   res.setHeader('Content-Type', 'text/yaml');
-  res.send('# CAFM Pro API\n# Spec complète disponible en JSON sur /api-spec.json');
+  res.send('# REZIDET API\n# Spec complète disponible en JSON sur /api-spec.json');
 });
 
 module.exports = router;

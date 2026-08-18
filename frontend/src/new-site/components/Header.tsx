@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
     },
   ];
 
-  const brandOptions: BrandVariant[] = ['CAFM Pro', 'Sovereign Device Nexus', 'ReclamTrack Pro'];
+  const brandOptions: BrandVariant[] = ['REZIDET', 'REZIDET', 'REZIDET'];
 
   const themeOptions: { id: BackgroundTheme; name: string }[] = [
     { id: 'circuit', name: 'Circuit PCB' },
@@ -107,16 +107,16 @@ export const Header: React.FC<HeaderProps> = ({
             title="Click to switch Brand Theme"
           >
             <div className="w-9 h-9 rounded-xl btn-gradient-orange flex items-center justify-center text-white glow-orange-sm group-hover:scale-105 transition-transform">
-              {brand === 'CAFM Pro' && <Layers className="w-5 h-5" />}
-              {brand === 'Sovereign Device Nexus' && <Shield className="w-5 h-5" />}
-              {brand === 'ReclamTrack Pro' && <Sparkles className="w-5 h-5" />}
+              {brand === 'REZIDET' && <Layers className="w-5 h-5" />}
+              {brand === 'REZIDET' && <Shield className="w-5 h-5" />}
+              {brand === 'REZIDET' && <Sparkles className="w-5 h-5" />}
             </div>
             <div className="text-left">
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold tracking-tight text-white group-hover:text-orange-400 transition-colors">
-                  {brand === 'ReclamTrack Pro' ? (
+                  {brand === 'REZIDET' ? (
                     <>
-                      RECLAMTRACK <span className="text-orange-500">PRO</span>
+                      REZIDET <span className="text-orange-500">PRO</span>
                     </>
                   ) : (
                     brand

@@ -51,14 +51,14 @@ export default function PropertyPanel({ element, onUpdate }) {
           <p><span className="text-slate-500">Global ID:</span> {element.ifcId}</p>
         </div>
 
-        {/* Association CAFM */}
+        {/* Association REZIDET */}
         <div className="mb-4 bg-slate-950 p-3 rounded border border-slate-800">
           <h4 className="font-semibold text-indigo-400 mb-2 flex items-center gap-1.5">
-            <Link className="w-3.5 h-3.5" /> Équipement CAFM Associé
+            <Link className="w-3.5 h-3.5" /> Équipement REZIDET Associé
           </h4>
           {element.asset ? (
             <div className="space-y-1">
-              <p><span className="text-slate-500">Nom CAFM:</span> {element.asset.name}</p>
+              <p><span className="text-slate-500">Nom REZIDET:</span> {element.asset.name}</p>
               <p><span className="text-slate-500">N° de Série:</span> {element.asset.serialNumber}</p>
               <p><span className="text-slate-500">État de Santé:</span> 
                 <span className={`ml-1 font-bold ${
@@ -70,7 +70,7 @@ export default function PropertyPanel({ element, onUpdate }) {
             </div>
           ) : (
             <div>
-              <p className="text-slate-500 mb-2">Aucun actif CAFM lié à cet élément BIM.</p>
+              <p className="text-slate-500 mb-2">Aucun actif REZIDET lié à cet élément BIM.</p>
               <div className="flex gap-2">
                 <select
                   value={selectedAssetId}

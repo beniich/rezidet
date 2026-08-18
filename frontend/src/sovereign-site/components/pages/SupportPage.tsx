@@ -29,7 +29,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate, language: 
       sender: 'bot',
       text:
         language === 'FR'
-          ? "Bonjour ! Je suis l'assistant IA CAFM Pro. Comment puis-je vous aider aujourd'hui ?"
+          ? "Bonjour ! Je suis l'assistant IA REZIDET. Comment puis-je vous aider aujourd'hui ?"
           : language === 'DE'
           ? 'Hallo! Ich bin der KI-Assistent. Wie kann ich Ihnen heute helfen?'
           : language === 'ES'
@@ -256,7 +256,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({ onNavigate, language: 
             <div className="flex items-center gap-2">
               <Bot className="w-6 h-6 text-orange-400" />
               <div>
-                <h4 className="text-sm font-bold text-white">Expert IA CAFM Pro</h4>
+                <h4 className="text-sm font-bold text-white">Expert IA REZIDET</h4>
                 <span className="text-[10px] text-emerald-400 font-mono">En ligne • Support 24/7</span>
               </div>
             </div>

@@ -120,7 +120,7 @@ export const DemoPage: React.FC<DemoPageProps> = ({ onNavigate, language: propLa
                 <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto" />
                 <h4 className="text-xl font-bold text-white">Demo Scheduled!</h4>
                 <p className="text-xs text-gray-300 leading-relaxed">
-                  Thank you, <span className="text-orange-400 font-bold">{formData.name}</span>. A senior CAFM Pro solution architect will contact you shortly at <span className="font-mono text-white">{formData.email}</span> with calendar details.
+                  Thank you, <span className="text-orange-400 font-bold">{formData.name}</span>. A senior REZIDET solution architect will contact you shortly at <span className="font-mono text-white">{formData.email}</span> with calendar details.
                 </p>
                 <button
                   onClick={() => setBooked(false)}

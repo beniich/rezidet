@@ -23,7 +23,7 @@ export type BackgroundTheme =
   | 'brain'
   | 'map';
 
-export type BrandVariant = 'CAFM Pro' | 'Sovereign Device Nexus' | 'ReclamTrack Pro';
+export type BrandVariant = 'REZIDET' | 'REZIDET' | 'REZIDET';
 
 export interface PricingPlan {
   id: string;

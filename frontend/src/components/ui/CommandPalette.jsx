@@ -10,7 +10,7 @@ const COMMANDS = [
   { id: 'nav-workorders', title: 'Interventions',        section: 'Navigation', icon: Wrench,     path: '/dashboard/work-orders' },
   { id: 'nav-analytics',  title: 'Analytics',            section: 'Navigation', icon: BarChart3,  path: '/dashboard/analytics' },
   { id: 'nav-settings',   title: 'Paramètres',           section: 'Navigation', icon: Settings,   path: '/dashboard/settings' },
-  { id: 'nav-staking',    title: 'Staking CAFM',         section: 'Web3',       icon: Coins,      path: '/dashboard/staking' },
+  { id: 'nav-staking',    title: 'Staking REZIDET',         section: 'Web3',       icon: Coins,      path: '/dashboard/staking' },
   { id: 'nav-perps',      title: 'Perpetual Trading',    section: 'Web3',       icon: TrendingUp, path: '/dashboard/perpetuals' },
   { id: 'nav-oracle',     title: 'Oracle Prices',        section: 'Web3',       icon: Activity,   path: '/dashboard/oracle' },
   // Actions

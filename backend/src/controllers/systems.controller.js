@@ -1,4 +1,4 @@
-// Systèmes physiques et services de bâtiments CAFM
+// Systèmes physiques et services de bâtiments REZIDET
 
 exports.getAccessControl = async (req, res) => {
   try {

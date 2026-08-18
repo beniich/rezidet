@@ -105,7 +105,7 @@ export function parseFacilityAssetRows(rows: string[][]): FacilityAssetRow[] {
  */
 export async function createFacilityAssetSpreadsheet(
   accessToken: string,
-  title: string = 'CAFM Pro - Facility Asset Inventory',
+  title: string = 'REZIDET - Facility Asset Inventory',
   assetsData?: FacilityAssetRow[]
 ): Promise<{ spreadsheetId: string; spreadsheetUrl: string; values: string[][] }> {
   const url = 'https://sheets.googleapis.com/v4/spreadsheets';

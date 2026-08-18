@@ -26,7 +26,7 @@ export default function DAO() {
         <div className="flex items-center gap-3">
           <Vote className="w-8 h-8 text-indigo-600" />
           <div>
-            <h1 className="text-2xl font-bold">CAFM DAO</h1>
+            <h1 className="text-2xl font-bold">REZIDET DAO</h1>
             <p className="text-[var(--color-muted)]">Gouvernance décentralisée par les holders de tokens</p>
           </div>
         </div>

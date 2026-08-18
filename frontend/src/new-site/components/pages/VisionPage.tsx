@@ -89,7 +89,7 @@ export const VisionPage: React.FC<VisionPageProps> = ({ onNavigate, language: pr
       <div className="glass-card p-10 rounded-3xl border border-orange-500/30 text-center space-y-6 glow-border">
         <h3 className="text-3xl font-bold text-white">Join the Sovereign Future</h3>
         <p className="text-sm text-gray-300 max-w-xl mx-auto">
-          Partner with Sovereign Device Nexus to safeguard your commercial real estate assets today.
+          Partner with REZIDET to safeguard your commercial real estate assets today.
         </p>
         <button
           onClick={() => onNavigate('contact')}

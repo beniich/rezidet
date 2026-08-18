@@ -29,7 +29,7 @@ export function SiteApp() {
   const [activePage, setActivePage] = useState<PageId>('home');
   const [language, setLanguage] = useState<Language>('FR');
   const [bgTheme, setBgTheme] = useState<BackgroundTheme>('circuit');
-  const [brand, setBrand] = useState<BrandVariant>('CAFM Pro');
+  const [brand, setBrand] = useState<BrandVariant>('REZIDET');
 
   const handleNavigate = (page: PageId) => {
     setActivePage(page);

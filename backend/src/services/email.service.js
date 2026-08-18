@@ -1,7 +1,7 @@
 const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
-const FROM_EMAIL = 'CAFM <noreply@cafm.com>';
+const FROM_EMAIL = 'REZIDET <noreply@cafm.com>';
 
 class EmailService {
   /**
@@ -34,10 +34,10 @@ class EmailService {
   async sendWelcome(email, firstName) {
     return this.send({
       to: email,
-      subject: '🎉 Bienvenue sur CAFM CRM',
+      subject: '🎉 Bienvenue sur REZIDET CRM',
       html: `
         <h1>Bonjour ${firstName},</h1>
-        <p>Votre compte CAFM CRM est actif. Profitez de 14 jours d'essai gratuit.</p>
+        <p>Votre compte REZIDET CRM est actif. Profitez de 14 jours d'essai gratuit.</p>
         <a href="${process.env.APP_URL || 'http://localhost:3000'}/crm/login">Se connecter</a>
       `
     });

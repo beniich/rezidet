@@ -4,11 +4,11 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.3',
     info: {
-      title: 'CAFM Pro API',
+      title: 'REZIDET API',
       version: '2.1.0',
-      description: 'API REST pour la plateforme CAFM (Computer-Aided Facility Management). Authentification JWT requise.',
+      description: 'API REST pour la plateforme REZIDET (Computer-Aided Facility Management). Authentification JWT requise.',
       contact: {
-        name: 'Équipe CAFM Pro',
+        name: 'Équipe REZIDET',
         email: 'dev@cafm.com',
         url: 'https://cafm.com'
       },

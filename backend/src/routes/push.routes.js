@@ -34,7 +34,7 @@ router.post('/unsubscribe', async (req, res) => {
 router.post('/test', async (req, res) => {
   try {
     const sent = await pushService.sendToUser(req.user.userId, {
-      title: '🧪 Test CAFM Pro',
+      title: '🧪 Test REZIDET',
       body: 'Les notifications push fonctionnent correctement !',
       url: '/dashboard',
       tag: 'test'

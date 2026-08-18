@@ -144,7 +144,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ onNavigate, language: propLa
             <p className="text-sm text-gray-200 leading-relaxed">{selectedArticle.content}</p>
 
             <div className="glass-card p-4 rounded-xl border border-white/10 text-xs text-gray-300 leading-relaxed font-mono">
-              [SECURITY NOTE]: All articles in the Sovereign Device Nexus research library are cryptographically signed and peer-reviewed by cybersecurity architects.
+              [SECURITY NOTE]: All articles in the REZIDET research library are cryptographically signed and peer-reviewed by cybersecurity architects.
             </div>
 
             <button

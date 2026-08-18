@@ -154,7 +154,7 @@ export const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onNavigate, 
 
         {/* Bottom copyright style banner matching image 1 */}
         <div className="mt-10 border-t border-white/10 pt-4 text-center text-xs font-mono text-gray-400">
-          © 2026 SOVEREIGN DEVICE NEXUS. {t('footerRights', language)}
+          © 2026 REZIDET. {t('footerRights', language)}
         </div>
       </div>
 

@@ -54,7 +54,7 @@ exports.validatePromo = async (req, res) => {
  */
 exports.generateBulkCodes = async (req, res) => {
   const {
-    prefix = 'CAFM', count = 10, discountType = 'percent',
+    prefix = 'REZIDET', count = 10, discountType = 'percent',
     discountValue = 20, expiresInDays = 30, campaign
   } = req.body;
 
